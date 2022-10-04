@@ -1,36 +1,44 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
-import { Text, Container } from "native-base";
+import { Text, Container, Button } from "native-base";
 
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
+import { useStore } from "../../store";
 
 const shortenAddress = (address: string | any[]) => {
-  return `${address.slice(0, 6)}...${address.slice(
-    address.length - 4,
+  return `${address.slice(0, 8)}...${address.slice(
+    address.length - 6,
     address.length
   )}`;
 };
 
-export default function Home({}) {
+const ConnectWalletScreen = ({ navigation }) => {
   const connector = useWalletConnect();
+  const { attachWallet, detachWallet } = useStore();
 
-  const connectWallet = React.useCallback(() => {
-    connector.connect();
+  const connectWallet = React.useCallback(async () => {
+    const connected = await connector.connect();
+    const walletData = {
+      address: connected.accounts[0],
+      account: {
+        icon: connected.peerMeta.icons[0],
+        name: connected.peerMeta.name,
+      },
+    };
+
+    attachWallet(walletData);
   }, [connector]);
 
-  const killSession = React.useCallback(() => {
-    connector.killSession();
+  const removeWallet = React.useCallback(async () => {
+    await detachWallet();
+    return connector.killSession();
   }, [connector]);
 
   return (
     <Container style={styles.container}>
-      <Text style={styles.title}>Connect your wallet</Text>
-      <Container
-        style={styles.separator}
-        // lightColor="#eee"
-        // darkColor="rgba(255,255,255,0.1)"
-      />
+      <Text style={styles.title}>Connect a crypto wallet</Text>
+      <Container style={styles.separator} />
       {!connector.connected && (
         <TouchableOpacity onPress={connectWallet} style={styles.buttonStyle}>
           <Text style={styles.buttonTextStyle}>Connect a Wallet</Text>
@@ -38,15 +46,25 @@ export default function Home({}) {
       )}
       {!!connector.connected && (
         <>
-          <Text>Demo: {connector.accounts[0]}</Text>
-          <TouchableOpacity onPress={killSession} style={styles.buttonStyle}>
-            <Text style={styles.buttonTextStyle}>Log out</Text>
-          </TouchableOpacity>
+          <Text> {shortenAddress(connector.accounts[0])}</Text>
+          {/* <TouchableOpacity onPress={removeWallet} style={styles.buttonStyle}>
+            <Text style={styles.buttonTextStyle}>Remove wallet</Text>
+          </TouchableOpacity> */}
+          <Button
+            style={styles.buttonStyle}
+            onPress={() =>
+              navigation.navigate("Dashboard", {
+                screen: "Home",
+              })
+            }
+          >
+            Explore NFTs
+          </Button>
         </>
       )}
     </Container>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -84,3 +102,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+export default ConnectWalletScreen;

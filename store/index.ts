@@ -3,7 +3,10 @@ import axiosInstance from "../utils/axiosInstance";
 import persist from "../utils/zustandPersist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import errors from "../constants/errors";
-import { setItemInAsyncStorage } from "../utils/handleAsyncStorage";
+import {
+  setItemInAsyncStorage,
+  removeItemFromAsyncStorage,
+} from "../utils/handleAsyncStorage";
 
 export const useStore = create((set) => ({
   token: null,
@@ -11,10 +14,11 @@ export const useStore = create((set) => ({
   loginError: null,
   signUpError: null,
   userId: null,
+  hasWalletConnected: false,
+  walletData: null,
   signUp: async (data: any) => {
     try {
       const res = await axiosInstance.post("/auth/register", data);
-      console.log("Response: " + res);
       if (res.data.error) {
         console.log("Error: ", res.data.error);
         Object.entries(errors).forEach(([key, value]) => {
@@ -22,16 +26,16 @@ export const useStore = create((set) => ({
             set({ signUpError: res.data.error.message });
           }
         });
-        await setItemInAsyncStorage("token", res.data.token);
       } else {
-        set({ isLoggedIn: true });
-        console.log(res.data);
+        const userData = res.data.user;
+        set({ isLoggedIn: true, userId: userData._id });
+        await setItemInAsyncStorage("token", res.data.token);
       }
     } catch (err) {
       console.error(err);
     }
   },
-  signIn: async (data: any) => {
+  signIn: async (data: any, navigation) => {
     try {
       const res = await axiosInstance.post("/auth/login", data);
 
@@ -42,22 +46,54 @@ export const useStore = create((set) => ({
           }
         });
       } else {
-        set({ isLoggedIn: true });
-        console.log(res.data);
-        await AsyncStorage.setItem("token", res.data.token);
+        const userData = res.data.user;
+
+        set({ isLoggedIn: true, userId: res.data.user._id });
+        await setItemInAsyncStorage("token", res.data.token);
+
+        if (!userData.wallet) {
+          set({ hasWalletConnected: false });
+          navigation.navigate("ConnectWallet");
+        } else {
+          set({ hasWalletConnected: true, walletData: userData.wallet });
+          navigation.navigate("Dashboard", {
+            screen: "Home",
+          });
+        }
       }
     } catch (err) {
       console.error(err);
     }
   },
-  logout: async () => {
-    set({ isLoggedIn: false });
+  logout: async (navigation) => {
+    set({ isLoggedIn: false, userId: null });
     setItemInAsyncStorage("token", "");
+    navigation.navigate("Auth");
   },
-  attachWallet: async (data: any) => {
+  attachWallet: async (data: any, navigation) => {
     try {
       console.log("Data: ", data);
       const res = await axiosInstance.post("/auth/attach-wallet", data);
+
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  detachWallet: async () => {
+    try {
+      const res = await axiosInstance.delete("/auth/detach-wallet");
+      await removeItemFromAsyncStorage(
+        "@walletconnect/qrcode-modal-react-native:session"
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  getUserData: async () => {
+    try {
+      const res = await axiosInstance.get("/auth/get-user-data");
       console.log(res.data);
     } catch (err) {
       console.error(err);
