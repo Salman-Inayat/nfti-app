@@ -20,6 +20,7 @@ import { useStore } from "../../store";
 
 const SignIn = ({
   handleAuthScreenChange,
+  navigation,
 }: {
   handleAuthScreenChange: (screen: string) => void;
 }) => {
@@ -42,7 +43,7 @@ const SignIn = ({
   });
 
   const onSubmit = (data) => {
-    signIn(data);
+    signIn(data, navigation);
   };
 
   return (

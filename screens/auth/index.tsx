@@ -13,7 +13,7 @@ import {
   Container,
 } from "native-base";
 
-const AuthScreen = () => {
+const AuthScreen = ({ navigation }) => {
   const [authScreen, setAuthScreen] = useState("signIn");
 
   const handleAuthScreenChange = (screen: React.SetStateAction<string>) => {
@@ -35,9 +35,15 @@ const AuthScreen = () => {
         </Container>
         <Container centerContent height="70%" width="80%" p="10">
           {authScreen === "signIn" ? (
-            <SignIn handleAuthScreenChange={handleAuthScreenChange} />
+            <SignIn
+              handleAuthScreenChange={handleAuthScreenChange}
+              navigation={navigation}
+            />
           ) : (
-            <SignUp handleAuthScreenChange={handleAuthScreenChange} />
+            <SignUp
+              handleAuthScreenChange={handleAuthScreenChange}
+              navigation={navigation}
+            />
           )}
         </Container>
       </VStack>
