@@ -22,33 +22,19 @@ import * as Yup from "yup";
 import { useStore } from "../../store";
 import {
   // client,
-  uploadImageToIPFS,
-  uploadNFTWithMetadataToIPFS,
+  // uploadImageToIPFS,
+  // uploadNFTWithMetadataToIPFS,
+  uploadToIPFS,
 } from "../../utils/ipfsClient";
-import { create as ipfsHttpClient } from "ipfs-http-client";
+// import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const CreateNFT = () => {
-  const client = ipfsHttpClient({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-    headers: {
-      authorization: `Basic ${Buffer.from(
-        process.env.INFURA_IPFS_PROJECT_ID +
-          ":" +
-          process.env.INFURA_IPFS_SECRET_KEY
-      ).toString("base64")}`,
-    },
-  });
-  const [image, setImage] = useState();
-
-  // const { uploadNFT } = useStore();
+  const [imageURL, setImageURL] = useState();
 
   const CreateNFTSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     description: Yup.string().required("Description is required"),
     price: Yup.string().required("Price is required"),
-    imageUrl: Yup.string().required("Image is required"),
   });
 
   const {
@@ -61,49 +47,42 @@ const CreateNFT = () => {
   });
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
       base64: true,
     });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result);
-    } else {
+    if (result.cancelled) {
       return;
     }
 
-    await uploadImageToIPFS(client, result);
-
-    // // ImagePicker saves the taken photo to disk and returns a local URI to it
-    // let localUri = result.uri;
-    // let filename = localUri.split("/").pop();
-
-    // // Infer the type of the image
-    // let match = /\.(\w+)$/.exec(filename);
-    // let type = match ? `image/${match[1]}` : `image`;
-
-    // // Upload the image using the fetch and FormData APIs
-    // let formData = new FormData();
-    // // Assume "photo" is the name of the form field the server expects
-    // formData.append("photo", { uri: localUri, name: filename, type });
-
-    // await uploadNFT(formData);
+    const base64 = result.base64;
+    const imageURL = await uploadToIPFS(base64);
+    setImageURL(imageURL);
+    console.log(imageURL);
   };
 
-  async function listNFTForSale(data) {
-    const url = await uploadNFTWithMetadataToIPFS(client, data, image);
+  async function listNFTForSale(formData) {
+    console.log("sumirewfsadfds");
+    const { name, description, price } = formData;
 
+    /* first, upload metadata to IPFS */
+    const data = {
+      name,
+      description,
+      image: imageURL,
+    };
+
+    const contentURL = await uploadToIPFS(data);
+    console.log(contentURL);
+
+    // const url = await uploadNFTWithMetadataToIPFS(client, data, image);
     // const web3 = new Web3Modal();
     // const connection = await web3.connect();
     // const provider = new ethers.providers.Web3Provider(connection);
     // const signer = provider.getSigner();
-
     // /* create the NFT */
     // const price = ethers.utils.parseUnits(data.price, "ether");
     // let contract = new ethers.Contract(
@@ -181,9 +160,9 @@ const CreateNFT = () => {
           </FormControl.ErrorMessage>
         </FormControl>
         <Button onPress={pickImage}>Pick Image</Button>
-        {image && (
+        {/* {image && (
           <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        )}
+        )} */}
 
         <Button
           mt="2"

@@ -1,50 +1,23 @@
-// import { create as ipfsHttpClient } from "ipfs-http-client";
+import axios from "axios";
 
-// const client = ipfsHttpClient({
-//   host: "ipfs.infura.io",
-//   port: 5001,
-//   protocol: "https",
-//   headers: {
-//     authorization: `Basic ${Buffer.from(
-//       process.env.INFURA_IPFS_PROJECT_ID +
-//         ":" +
-//         process.env.INFURA_IPFS_SECRET_KEY
-//     ).toString("base64")}`,
-//   },
-// });
+export const uploadToIPFS = async (content) => {
+  const options = {
+    method: "POST",
+    url: "https://deep-index.moralis.io/api/v2/ipfs/uploadFolder",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      "X-API-Key":
+        "wqWeaqqfbDvyuG4iP9SPk7rLwuNamT0lMgqsznPagFnJUGLeN7z0PSYbIsokgxE4",
+    },
+    data: [
+      {
+        content: content,
+        path: "sdasdsaddasewirjewirjewkrlem",
+      },
+    ],
+  };
 
-const uploadImageToIPFS = async (client, imageBase64: string) => {
-  const blob = await fetch(imageBase64).then((res) => res.blob());
-
-  try {
-    const added = await client.add(blob, {
-      progress: (prog) => console.log(`received: ${prog}`),
-    });
-    console.log({ added });
-    const url = `https://nfts-market.infura-ipfs.io/ipfs/${added.path}`;
-    return url;
-  } catch (error) {
-    console.log("Error uploading file: ", error);
-  }
+  const response = await axios.request(options);
+  return response.data[0].path;
 };
-
-const uploadNFTWithMetadataToIPFS = async (client, nftData, imageURL) => {
-  const { name, description, price } = nftData;
-
-  /* first, upload metadata to IPFS */
-  const data = JSON.stringify({
-    name,
-    description,
-    image: imageURL,
-  });
-  try {
-    const added = await client.add(data);
-    const url = `https://nfts-market.infura-ipfs.io/ipfs/${added.path}`;
-    /* after metadata is uploaded to IPFS, return the URL to use it in the transaction */
-    return url;
-  } catch (error) {
-    console.log("Error uploading file: ", error);
-  }
-};
-
-export { uploadImageToIPFS, uploadNFTWithMetadataToIPFS };

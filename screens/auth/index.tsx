@@ -11,6 +11,7 @@ import {
   Box,
   Image,
   Container,
+  View,
 } from "native-base";
 
 const AuthScreen = ({ navigation }) => {
@@ -20,7 +21,7 @@ const AuthScreen = ({ navigation }) => {
     setAuthScreen(screen);
   };
   return (
-    <Container safeArea centerContent width="100%" pt="20">
+    <View width="100%" p="20">
       <VStack space={4} alignItems="center" width="100%">
         <Container centerContent height="20%" width="100%">
           <Image
@@ -33,7 +34,7 @@ const AuthScreen = ({ navigation }) => {
             size="xl"
           />
         </Container>
-        <Container centerContent height="70%" width="80%" p="10">
+        <Container centerContent height="70%" width="100%" pt="10">
           {authScreen === "signIn" ? (
             <SignIn
               handleAuthScreenChange={handleAuthScreenChange}
@@ -47,7 +48,7 @@ const AuthScreen = ({ navigation }) => {
           )}
         </Container>
       </VStack>
-    </Container>
+    </View>
   );
 };
 
