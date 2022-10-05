@@ -99,4 +99,17 @@ export const useStore = create((set) => ({
       console.error(err);
     }
   },
+  // uploadNFT: async (data: any) => {
+  //   try {
+  //     console.log({ data });
+  //     const res = await axiosInstance.post("/nft/upload", data, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     console.log(res.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // },
 }));
