@@ -10,14 +10,17 @@ const queriesXml = `
 <queries>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="wc"/>
   </intent>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="https"/>
   </intent>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="wss"/>
   </intent>
 </queries>`;
@@ -105,6 +108,7 @@ const config: ExpoConfig = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
+    bundleIdentifier: "com.clxyder.testdapp",
   },
   android: {
     package: "com.clxyder.testdapp",

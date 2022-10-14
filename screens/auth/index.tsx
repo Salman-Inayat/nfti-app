@@ -21,9 +21,9 @@ const AuthScreen = ({ navigation }) => {
     setAuthScreen(screen);
   };
   return (
-    <View width="100%" p="20">
-      <VStack space={4} alignItems="center" width="100%">
-        <Container centerContent height="20%" width="100%">
+    <View p="20">
+      <VStack space={4} alignItems="center">
+        <Container centerContent>
           <Image
             source={{
               uri: "https://wallpaperaccess.com/full/317501.jpg",
@@ -34,7 +34,7 @@ const AuthScreen = ({ navigation }) => {
             size="xl"
           />
         </Container>
-        <Container centerContent height="70%" width="100%" pt="10">
+        <Container centerContent pt="10">
           {authScreen === "signIn" ? (
             <SignIn
               handleAuthScreenChange={handleAuthScreenChange}
