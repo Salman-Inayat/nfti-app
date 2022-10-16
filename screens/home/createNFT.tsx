@@ -20,16 +20,15 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useStore } from "../../store";
-import {
-  // client,
-  // uploadImageToIPFS,
-  // uploadNFTWithMetadataToIPFS,
-  uploadToIPFS,
-} from "../../utils/ipfsClient";
+import { uploadToIPFS } from "../../utils/ipfsClient";
+import { ethers } from "ethers";
+import { marketplaceAddress, marketplaceJSON } from "../../config";
+
 // import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const CreateNFT = () => {
   const [imageURL, setImageURL] = useState();
+  const { connector, provider, signer } = useStore();
 
   const CreateNFTSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -65,7 +64,6 @@ const CreateNFT = () => {
   };
 
   async function listNFTForSale(formData) {
-    console.log("sumirewfsadfds");
     const { name, description, price } = formData;
 
     /* first, upload metadata to IPFS */
@@ -78,24 +76,23 @@ const CreateNFT = () => {
     const contentURL = await uploadToIPFS(data);
     console.log(contentURL);
 
-    // const url = await uploadNFTWithMetadataToIPFS(client, data, image);
-    // const web3 = new Web3Modal();
-    // const connection = await web3.connect();
-    // const provider = new ethers.providers.Web3Provider(connection);
-    // const signer = provider.getSigner();
-    // /* create the NFT */
-    // const price = ethers.utils.parseUnits(data.price, "ether");
-    // let contract = new ethers.Contract(
-    //   marketplaceAddress,
-    //   NFTMarketplace.abi,
-    //   signer
-    // );
-    // let listingPrice = await contract.getListingPrice();
-    // listingPrice = listingPrice.toString();
-    // let transaction = await contract.createToken(url, price, {
-    //   value: listingPrice,
-    // });
-    // await transaction.wait();
+    /* create the NFT */
+    const priceInETH = ethers.utils.parseUnits(price, "ether");
+    console.log({ priceInETH });
+    let contract = new ethers.Contract(
+      marketplaceAddress,
+      marketplaceJSON.abi,
+      signer
+    );
+    let listingPrice = await contract.getListingPrice();
+    console.log({ listingPrice });
+    listingPrice = listingPrice.toString();
+    let transaction = await contract.createToken(contentURL, priceInETH, {
+      value: listingPrice,
+    });
+    console.log({ transaction });
+    await transaction.wait();
+
     // router.push("/");
   }
 

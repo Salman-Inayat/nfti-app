@@ -8,6 +8,10 @@ import { useStore } from "./store";
 
 import { StatusBar } from "expo-status-bar";
 
+import WalletConnectProvider from "@walletconnect/react-native-dapp";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
+
 import AppScreen from "./screens";
 
 const App = () => {
@@ -15,14 +19,6 @@ const App = () => {
 
   return (
     <NativeBaseProvider>
-      {/* {isLoggedIn ? (
-        <AuthScreen />
-      ) : hasWalletConnected ? (
-        <HomeScreen />
-      ) : (
-        <ConnectWalletScreen />
-      )}
-      <StatusBar /> */}
       <AppScreen />
     </NativeBaseProvider>
   );

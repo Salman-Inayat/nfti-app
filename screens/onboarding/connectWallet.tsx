@@ -23,27 +23,28 @@ const shortenAddress = (address: string | any[]) => {
 };
 
 const ConnectWalletScreen = ({ navigation }) => {
-  const { attachWallet, detachWallet } = useStore();
+  const { attachWallet, detachWallet, setUserWalletConnection } = useStore();
 
   const connector = useWalletConnect();
 
-  const connectWallet = React.useCallback(async () => {
+  const connectWallet = async () => {
     const connected = await connector.connect();
 
-    const provider = new WalletConnectProvider({
-      rpc: {
-        5: "https://rpc.goerli.mudit.blog/",
-      },
-      chainId: 5,
-      infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
-      connector: connector,
-      qrcode: false,
-    });
+    // const provider = new WalletConnectProvider({
+    //   rpc: {
+    //     5: "https://rpc.goerli.mudit.blog/",
+    //   },
+    //   chainId: 5,
+    //   infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
+    //   connector: connector,
+    //   qrcode: false,
+    // });
 
-    // await provider.enable();
+    // const wp = await provider.enable();
 
     // const ethersProvider = new ethers.providers.Web3Provider(provider);
-    // const signer = ethersProvider.getSigner();
+
+    // // const signer = ethersProvider.getSigner();
     // console.log({ ethersProvider });
 
     // const balance = await ethersProvider.getBalance(session.accounts[0]);
@@ -53,11 +54,11 @@ const ConnectWalletScreen = ({ navigation }) => {
     // console.log({ balanceFormatted });
 
     // attachWallet(walletData);
-  }, [connector]);
+  };
 
   useEffect(() => {
     if (connector.connected) {
-      const provider = new WalletConnectProvider({
+      const walletProvider = new WalletConnectProvider({
         // rpc: {
         //   5: "https://rpc.goerli.mudit.blog/",
         // },
@@ -67,36 +68,45 @@ const ConnectWalletScreen = ({ navigation }) => {
         qrcode: false,
       });
 
-      console.log("Provider: ", provider);
+      let wp = (async () => {
+        return await walletProvider.enable();
+      })();
 
-      // const network = "goerli"; // use rinkeby testnet
-      const demoProvider = new ethers.providers.JsonRpcProvider();
-      const address = connector.accounts[0];
-      demoProvider.getBalance(address).then((balance) => {
-        // convert a currency unit from wei to ether
-        const balanceInEth = ethers.utils.formatEther(balance);
-        console.log(`balance: ${balanceInEth} ETH`);
-      });
+      wp.then((res) => {
+        console.log("WP response: ", res);
+        const provider = new ethers.providers.Web3Provider(walletProvider);
 
-      const marketplace = new ethers.Contract(
-        marketplaceAddress,
-        marketplaceJSON.abi,
-        demoProvider
-      );
+        const signer = provider.getSigner();
 
-      const fetchListingPrice = async () => {
-        return await marketplace.getListingPrice();
-      };
+        provider.getBalance(res[0]).then((balance) => {
+          // convert a currency unit from wei to ether
+          const balanceInEth = ethers.utils.formatEther(balance);
+          console.log(`balance: ${balanceInEth} ETH`);
+        });
 
-      fetchListingPrice()
-        .then((res) => console.log(res.toString()))
-        .catch((err) => console.log(err));
+        const marketplace = new ethers.Contract(
+          marketplaceAddress,
+          marketplaceJSON.abi,
+          provider
+        );
 
-      // let listingPrice = fetchListingPrice()
+        const fetchListingPrice = async () => {
+          return await marketplace.getListingPrice();
+        };
 
-      // listingPrice = listingPrice.toString();
+        fetchListingPrice()
+          .then((res) => console.log(res.toString()))
+          .catch((err) => console.log(err));
 
-      // console.log({ listingPrice });
+        const data = {
+          connector,
+          provider,
+          signer,
+          navigation,
+        };
+
+        setUserWalletConnection(data);
+      }).catch((err) => console.log(err));
     }
   }, [connector]);
 
@@ -119,25 +129,7 @@ const ConnectWalletScreen = ({ navigation }) => {
       ethersProvider
     );
 
-    // console.log({ marketplace });
     console.log(await marketplace.getListingPrice());
-
-    // let listingPrice = await marketplace.getListingPrice();
-
-    // listingPrice = listingPrice.toString();
-
-    // console.log({ listingPrice });
-
-    // let transaction = await marketplace.createToken(
-    //   "http://sasadasd.dsadsadsa",
-    //   price,
-    //   {
-    //     value: 12,
-    //   }
-    // );
-
-    // console.log({ transaction });
-    // await transaction.wait();
   };
 
   return (
