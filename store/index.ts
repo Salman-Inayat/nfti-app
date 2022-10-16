@@ -122,9 +122,5 @@ export const useStore = create((set) => ({
       provider,
       signer,
     });
-
-    navigation.navigate("Dashboard", {
-      screen: "Home",
-    });
   },
 }));

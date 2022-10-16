@@ -1,17 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Text,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Link,
-  Button,
-  HStack,
-  Center,
-  Container,
-} from "native-base";
+import { VStack, FormControl, Input, Button, useToast } from "native-base";
 
 import { View, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -23,12 +11,14 @@ import { useStore } from "../../store";
 import { uploadToIPFS } from "../../utils/ipfsClient";
 import { ethers } from "ethers";
 import { marketplaceAddress, marketplaceJSON } from "../../config";
+import Toaster from "../../components/Toaster";
 
 // import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const CreateNFT = () => {
   const [imageURL, setImageURL] = useState();
   const { connector, provider, signer } = useStore();
+  const toast = useToast();
 
   const CreateNFTSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -93,7 +83,11 @@ const CreateNFT = () => {
     console.log({ transaction });
     await transaction.wait();
 
-    // router.push("/");
+    toast.show({
+      render: () => {
+        return <Toaster statement="NFT created successfully" />;
+      },
+    });
   }
 
   return (
