@@ -6,16 +6,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./home";
 import AuthScreen from "./auth";
 import ConnectWalletScreen from "./onboarding/connectWallet";
-import { useStore } from "../store";
 
 const AppScreen = () => {
   const Stack = createNativeStackNavigator();
-  const { isLoggedIn } = useStore;
 
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Auth"
+        initialRouteName="ConnectWallet"
         screenOptions={{
           headerShown: false,
         }}

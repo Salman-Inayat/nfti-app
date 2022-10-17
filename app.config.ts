@@ -1,23 +1,26 @@
 import {
-    AndroidManifest,
-    ConfigPlugin,
-    withAndroidManifest,
-} from '@expo/config-plugins';
-import { ExpoConfig } from '@expo/config-types';
-import xml2js from 'xml2js';
+  AndroidManifest,
+  ConfigPlugin,
+  withAndroidManifest,
+} from "@expo/config-plugins";
+import { ExpoConfig } from "@expo/config-types";
+import xml2js from "xml2js";
 
 const queriesXml = `
 <queries>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="wc"/>
   </intent>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="https"/>
   </intent>
   <intent>
     <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="wss"/>
   </intent>
 </queries>`;
@@ -25,12 +28,12 @@ const queriesXml = `
 type KeyValuePair = {
   $: {
     [key: string]: string | undefined;
-  }
+  };
 };
 
-type Intent = { 
-  action?: KeyValuePair[],
-  data?: KeyValuePair[]
+type Intent = {
+  action?: KeyValuePair[];
+  data?: KeyValuePair[];
 };
 
 type Queries = {
@@ -39,25 +42,24 @@ type Queries = {
 
 type ParseResult = {
   queries: Queries;
-}
+};
 
 type AndroidManifestWithQuery = AndroidManifest & {
   manifest: {
     $: {
-      ['queries']?: any;
-    }
-  }
+      ["queries"]?: any;
+    };
+  };
 };
-
 
 /**
  * Does not currently work as expected, need to run `expo prebuild`
  * to configure plugins, but this breaks the `Expo Go` app functionality
- * 
+ *
  * @param androidManifest A AndroidManifest file that has been updated
  *                        to accept queries as a parameter
  * @returns an updated AndroidManifest file
- * 
+ *
  * @see https://chafikgharbi.com/expo-android-manifest/
  * @see https://docs.expo.dev/workflow/customizing/
  * @see https://docs.expo.dev/workflow/configuration/
@@ -68,13 +70,13 @@ const addQueryToManifest = (androidManifest: AndroidManifestWithQuery) => {
   let packageQuery: Queries;
 
   xml2js.parseString(queriesXml, (err, result: ParseResult) => {
-    packageQuery = result.queries
+    packageQuery = result.queries;
 
-    if (!Array.isArray(manifest.$['queries'])) {
-      manifest.$['queries'] = [];
+    if (!Array.isArray(manifest.$["queries"])) {
+      manifest.$["queries"] = [];
     }
 
-    manifest.$['queries'].push(packageQuery);
+    manifest.$["queries"].push(packageQuery);
   });
 
   return androidManifest;
@@ -88,8 +90,8 @@ const withPackageVisibility: ConfigPlugin = (config) => {
 };
 
 const config: ExpoConfig = {
-  name: 'test-dapp',
-  slug: 'test-dapp',
+  name: "test-dapp",
+  slug: "test-dapp",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -98,27 +100,35 @@ const config: ExpoConfig = {
   splash: {
     image: "./assets/images/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
   },
   updates: {
-    fallbackToCacheTimeout: 0
+    fallbackToCacheTimeout: 0,
   },
-  assetBundlePatterns: [
-    "**/*"
-  ],
+  assetBundlePatterns: ["**/*"],
   ios: {
-    "supportsTablet": true
+    supportsTablet: true,
+    bundleIdentifier: "com.clxyder.testdapp",
   },
   android: {
     package: "com.clxyder.testdapp",
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff"
-    }
+      backgroundColor: "#ffffff",
+    },
   },
   web: {
-    favicon: "./assets/images/favicon.png"
-  }
+    favicon: "./assets/images/favicon.png",
+  },
+  plugins: [
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "The app accesses your photos to let you share them with your friends.",
+      },
+    ],
+  ],
 };
 
 export default withPackageVisibility(config);

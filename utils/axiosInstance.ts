@@ -11,10 +11,10 @@ axiosInstance.interceptors.request.use(async (req) => {
   let token = await getItemFromAsyncStorage("token");
 
   if (token) req.headers!.authorization = `Bearer ${token}`;
-  req.headers = {
-    ...req.headers,
-    "Content-Type": "application/json",
-  };
+  // req.headers = {
+  //   ...req.headers,
+  //   "Content-Type": "application/json",
+  // };
 
   return req;
 });

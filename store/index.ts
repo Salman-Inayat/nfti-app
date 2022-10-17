@@ -16,6 +16,9 @@ export const useStore = create((set) => ({
   userId: null,
   hasWalletConnected: false,
   walletData: null,
+  connector: null,
+  provider: null,
+  signer: null,
   signUp: async (data: any) => {
     try {
       const res = await axiosInstance.post("/auth/register", data);
@@ -98,5 +101,26 @@ export const useStore = create((set) => ({
     } catch (err) {
       console.error(err);
     }
+  },
+  // uploadNFT: async (data: any) => {
+  //   try {
+  //     console.log({ data });
+  //     const res = await axiosInstance.post("/nft/upload", data, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     console.log(res.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // },
+  setUserWalletConnection: async (data) => {
+    const { connector, provider, signer, navigation } = data;
+    set({
+      connector,
+      provider,
+      signer,
+    });
   },
 }));

@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { Text, Container, Button } from "native-base";
 
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import { useStore } from "../../store";
+
+import "react-native-get-random-values";
+
+import "@ethersproject/shims";
+import { ethers } from "ethers";
+import { marketplaceAddress, marketplaceJSON } from "../../config";
+import { EtherscanProvider } from "@ethersproject/providers";
 
 const shortenAddress = (address: string | any[]) => {
   return `${address.slice(0, 8)}...${address.slice(
@@ -14,26 +23,113 @@ const shortenAddress = (address: string | any[]) => {
 };
 
 const ConnectWalletScreen = ({ navigation }) => {
+  const { attachWallet, detachWallet, setUserWalletConnection } = useStore();
+
   const connector = useWalletConnect();
-  const { attachWallet, detachWallet } = useStore();
 
-  const connectWallet = React.useCallback(async () => {
+  const connectWallet = async () => {
     const connected = await connector.connect();
-    const walletData = {
-      address: connected.accounts[0],
-      account: {
-        icon: connected.peerMeta.icons[0],
-        name: connected.peerMeta.name,
-      },
-    };
 
-    attachWallet(walletData);
+    // const provider = new WalletConnectProvider({
+    //   rpc: {
+    //     5: "https://rpc.goerli.mudit.blog/",
+    //   },
+    //   chainId: 5,
+    //   infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
+    //   connector: connector,
+    //   qrcode: false,
+    // });
+
+    // const wp = await provider.enable();
+
+    // const ethersProvider = new ethers.providers.Web3Provider(provider);
+
+    // // const signer = ethersProvider.getSigner();
+    // console.log({ ethersProvider });
+
+    // const balance = await ethersProvider.getBalance(session.accounts[0]);
+    // console.log("balance", balance.toString());
+    // const balanceFormatted = ethers.utils.formatEther(balance);
+
+    // console.log({ balanceFormatted });
+
+    // attachWallet(walletData);
+  };
+
+  useEffect(() => {
+    if (connector.connected) {
+      const walletProvider = new WalletConnectProvider({
+        // rpc: {
+        //   5: "https://rpc.goerli.mudit.blog/",
+        // },
+        chainId: 5,
+        infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
+        connector: connector,
+        qrcode: false,
+      });
+
+      let wp = (async () => {
+        return await walletProvider.enable();
+      })();
+
+      wp.then((res) => {
+        const provider = new ethers.providers.Web3Provider(walletProvider);
+
+        const signer = provider.getSigner();
+
+        // provider.getBalance(res[0]).then((balance) => {
+        //   // convert a currency unit from wei to ether
+        //   const balanceInEth = ethers.utils.formatEther(balance);
+        //   console.log(`balance: ${balanceInEth} ETH`);
+        // });
+
+        // const marketplace = new ethers.Contract(
+        //   marketplaceAddress,
+        //   marketplaceJSON.abi,
+        //   provider
+        // );
+
+        // const fetchListingPrice = async () => {
+        //   return await marketplace.getListingPrice();
+        // };
+
+        // fetchListingPrice()
+        //   .then((res) => console.log(res.toString()))
+        //   .catch((err) => console.log(err));
+
+        const data = {
+          connector,
+          provider,
+          signer,
+          navigation,
+        };
+
+        setUserWalletConnection(data);
+      }).catch((err) => console.log(err));
+    }
   }, [connector]);
 
   const removeWallet = React.useCallback(async () => {
-    await detachWallet();
+    // await detachWallet();
     return connector.killSession();
+    // AsyncStorage.removeItem("@walletconnect/qrcode-modal-react-native:session");
   }, [connector]);
+
+  const performTransaction = async () => {
+    console.log("clicked");
+    // const provider = ethers.providers.getDefaultProvider();
+    // const signer = provider.getSigner();
+
+    /* create the NFT */
+    const price = ethers.utils.parseUnits("0.25", "ether");
+    const marketplace = new ethers.Contract(
+      marketplaceAddress,
+      marketplaceJSON.abi,
+      ethersProvider
+    );
+
+    console.log(await marketplace.getListingPrice());
+  };
 
   return (
     <Container style={styles.container}>
@@ -47,9 +143,7 @@ const ConnectWalletScreen = ({ navigation }) => {
       {!!connector.connected && (
         <>
           <Text> {shortenAddress(connector.accounts[0])}</Text>
-          {/* <TouchableOpacity onPress={removeWallet} style={styles.buttonStyle}>
-            <Text style={styles.buttonTextStyle}>Remove wallet</Text>
-          </TouchableOpacity> */}
+
           <Button
             style={styles.buttonStyle}
             onPress={() =>
@@ -59,6 +153,15 @@ const ConnectWalletScreen = ({ navigation }) => {
             }
           >
             Explore NFTs
+          </Button>
+          <Button
+            style={styles.buttonStyle}
+            onPress={() => performTransaction()}
+          >
+            Perform transaction
+          </Button>
+          <Button onPress={() => removeWallet()} style={styles.buttonStyle}>
+            Remove wallet
           </Button>
         </>
       )}
@@ -79,7 +182,6 @@ const styles = StyleSheet.create({
   separator: {
     marginVertical: 30,
     height: 1,
-    width: "80%",
   },
   buttonStyle: {
     backgroundColor: "#3399FF",
