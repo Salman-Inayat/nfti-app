@@ -1,4 +1,4 @@
-import { NativeBaseProvider } from "native-base";
+import { Center, NativeBaseProvider } from "native-base";
 
 import { useStore } from "./store";
 
