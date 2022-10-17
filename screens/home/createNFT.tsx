@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { VStack, FormControl, Input, Button, useToast } from "native-base";
+import {
+  VStack,
+  FormControl,
+  Input,
+  Button,
+  useToast,
+  Center,
+  Container,
+  Box,
+} from "native-base";
 
 import { View, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -91,7 +100,7 @@ const CreateNFT = () => {
   }
 
   return (
-    <View>
+    <Box px={6} safeArea>
       <VStack space={3} mt="5">
         <FormControl isInvalid={"name" in errors}>
           <FormControl.Label>Name</FormControl.Label>
@@ -163,7 +172,7 @@ const CreateNFT = () => {
           List NFT
         </Button>
       </VStack>
-    </View>
+    </Box>
   );
 };
 
