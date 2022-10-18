@@ -77,6 +77,9 @@ const HomeScreen = ({ navigation }) => {
     tabBarShowLabel: false,
     tabBarInactiveTintColor: "gray",
     tabBarActiveTintColor: "blue",
+    cardStyle: {
+      backgroundColor: "red",
+    },
   });
 
   return (

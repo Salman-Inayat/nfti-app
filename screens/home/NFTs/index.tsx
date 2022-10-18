@@ -24,7 +24,14 @@ const NFTs = ({ navigation }) => {
   };
 
   return (
-    <Tab.Navigator initialRouteName="Home">
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        contentStyle: {
+          backgroundColor: "#E6E6E6",
+        },
+      }}
+    >
       <Tab.Screen name="Home" component={Home} options={headerOptions} />
       <Tab.Screen name="ViewNFT" component={ViewNFT} options={headerOptions} />
       <Tab.Screen

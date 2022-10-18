@@ -9,8 +9,15 @@ import {
   Skeleton,
   HStack,
   Pressable,
+  Heading,
 } from "native-base";
-import { View, ScrollView } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  ImageBackground,
+  FlatList,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
 import { useStore } from "../../../store";
@@ -22,6 +29,21 @@ import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { getItemFromAsyncStorage } from "../../../utils/handleAsyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+const formatData = (data, numColumns) => {
+  const numberOfFullRows = Math.floor(data.length / numColumns);
+
+  let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
+  while (
+    numberOfElementsLastRow !== numColumns &&
+    numberOfElementsLastRow !== 0
+  ) {
+    data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
+    numberOfElementsLastRow++;
+  }
+
+  return data;
+};
 
 const Home = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
@@ -116,51 +138,136 @@ const Home = ({ navigation }) => {
     });
   };
 
+  const renderItem = (nft) => {
+    const { item } = nft;
+    return (
+      <Pressable onPress={() => viewSingleNFT(item)} width="50%" px={1} py={2}>
+        <VStack
+          w="100%"
+          borderWidth="1"
+          overflow="hidden"
+          rounded="xl"
+          _dark={{
+            borderColor: "coolGray.700",
+          }}
+          _light={{
+            borderColor: "coolGray.200",
+          }}
+        >
+          <Image
+            source={{
+              uri: item.image,
+            }}
+            alt="Alternate Text"
+            size="xl"
+            style={{
+              width: "100%",
+              height: 200,
+            }}
+          />
+          <Box p={5} style={styles.price_container}>
+            <Text fontSize="lg">{item.name}</Text>
+
+            <HStack alignItems="center">
+              <MaterialCommunityIcons name="ethereum" size={20} color="black" />
+              <Text fontSize="sm">{item.price} ETH</Text>
+            </HStack>
+          </Box>
+        </VStack>
+      </Pressable>
+    );
+  };
+
   return (
-    <Box p={6} w="100%">
+    <Box px={6} safeArea w="100%">
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <VStack space={6}>
-          {data?.map((nft, index) => {
-            return (
-              <Pressable onPress={() => viewSingleNFT(nft)} key={index}>
-                <VStack
-                  w="100%"
-                  borderWidth="1"
-                  space={3}
-                  overflow="hidden"
-                  rounded="xl"
-                  _dark={{
-                    borderColor: "coolGray.700",
-                  }}
-                  _light={{
-                    borderColor: "coolGray.200",
-                  }}
-                  p={4}
-                >
-                  <Image
-                    source={{
-                      uri: nft.image,
-                    }}
-                    alt="Alternate Text"
-                    size="xl"
+        <VStack space={4}>
+          <Box style={styles.balance_box} alignItems="center">
+            <ImageBackground
+              source={require("../../../assets/images/balance_box_background.png")}
+              style={styles.image}
+              imageStyle={{ borderRadius: 20 }}
+            >
+              <Box style={styles.inner_box}>
+                <HStack space={120}>
+                  <Box>
+                    <Text color="white" fontSize="sm">
+                      {" "}
+                      Current balance
+                    </Text>
+                    <Heading
+                      color="white"
+                      size="xl"
+                      style={styles.balance_text}
+                      mt={2}
+                    >
+                      3554 ETH
+                    </Heading>
+                  </Box>
+                  <MaterialCommunityIcons
+                    name="ethereum"
+                    size={70}
+                    color="white"
                   />
-                  <Text fontSize="lg">{nft.name}</Text>
-
-                  <HStack alignItems="center">
-                    <MaterialCommunityIcons
-                      name="ethereum"
-                      size={20}
-                      color="black"
+                </HStack>
+              </Box>
+            </ImageBackground>
+          </Box>
+          {/* {data?.map((nft, index) => {
+              return (
+                <Pressable onPress={() => viewSingleNFT(nft)} key={index}>
+                  <VStack
+                    w="100%"
+                    borderWidth="1"
+                    overflow="hidden"
+                    rounded="xl"
+                    _dark={{
+                      borderColor: "coolGray.700",
+                    }}
+                    _light={{
+                      borderColor: "coolGray.200",
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: nft.image,
+                      }}
+                      alt="Alternate Text"
+                      size="xl"
+                      style={{
+                        width: "100%",
+                        height: 200,
+                      }}
                     />
-                    <Text fontSize="md">{nft.price}</Text>
-                  </HStack>
-                </VStack>
-              </Pressable>
-            );
-          })}
+                    <Box p={5} style={styles.price_container}>
+                      <Text fontSize="lg">{nft.name}</Text>
+
+                      <HStack alignItems="center">
+                        <MaterialCommunityIcons
+                          name="ethereum"
+                          size={20}
+                          color="black"
+                        />
+                        <Text fontSize="md">{nft.price}</Text>
+                      </HStack>
+                    </Box>
+                  </VStack>
+                </Pressable>
+              );
+            })} */}
+
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            numColumns={2}
+            style={{
+              flex: 1,
+              marginVertical: 20,
+            }}
+          />
         </VStack>
       </ScrollView>
     </Box>
@@ -168,3 +275,26 @@ const Home = ({ navigation }) => {
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  balance_box: {
+    height: 150,
+    width: "100%",
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+  },
+  inner_box: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
+  balance_text: {
+    fontWeight: "300",
+  },
+  price_container: {
+    backgroundColor: "#ffffff",
+  },
+});
