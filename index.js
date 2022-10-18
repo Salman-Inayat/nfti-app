@@ -1,6 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 
+import { LogBox } from "react-native";
 const { Platform } = require("react-native");
 
 if (Platform.OS !== "web") {
@@ -27,3 +28,6 @@ registerRootComponent(
     },
   })
 );
+
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs();

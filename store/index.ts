@@ -60,7 +60,10 @@ export const useStore = create((set) => ({
         } else {
           set({ hasWalletConnected: true, walletData: userData.wallet });
           navigation.navigate("Dashboard", {
-            screen: "Home",
+            screen: "NFTs",
+            params: {
+              screen: "Home",
+            },
           });
         }
       }
@@ -122,5 +125,18 @@ export const useStore = create((set) => ({
       provider,
       signer,
     });
+
+    // const walletData = {
+    //   connector,
+    //   // provider,
+    //   // signer,
+    // };
+
+    // try {
+    //   const res = await axiosInstance.post("/user/set-wallet", walletData);
+    //   console.log("Res: ", res);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   },
 }));

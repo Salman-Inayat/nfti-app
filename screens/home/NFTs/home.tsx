@@ -25,9 +25,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Home = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
-  console.log({ navigation });
+  // const [loading, setLoading] = useState(false);
+  // const [NFTs, setNFTs] = useState([]);
+
+  // useEffect(() => {
+  //   loadNFTs();
+  //   setLoading(false);
+  // }, []);
 
   const loadNFTs = async () => {
+    // setLoading(true);
     const contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
@@ -58,7 +65,6 @@ const Home = ({ navigation }) => {
       })
     );
 
-    console.log(items);
     return items;
   };
 
@@ -68,31 +74,37 @@ const Home = ({ navigation }) => {
 
   if (isLoading)
     return (
-      <Center w="100%" mt={5}>
-        <VStack
-          w="80%"
-          maxW="400"
-          borderWidth="1"
-          space={8}
-          overflow="hidden"
-          rounded="xl"
-          _dark={{
-            borderColor: "coolGray.700",
-          }}
-          _light={{
-            borderColor: "coolGray.200",
-          }}
-        >
-          <Skeleton h="40" />
-          <Skeleton.Text px="4" mb={5} />
+      <Box w="100%" mt={5} px={5} py={3}>
+        <VStack space={6} w="100%">
+          {[1, 2, 3].map((data, index) => {
+            return (
+              <VStack
+                w="100%"
+                maxW="600"
+                borderWidth="1"
+                space={8}
+                overflow="hidden"
+                rounded="xl"
+                _dark={{
+                  borderColor: "coolGray.700",
+                }}
+                _light={{
+                  borderColor: "coolGray.200",
+                }}
+                key={index}
+              >
+                <Skeleton h="40" />
+                <Skeleton.Text px="4" mb={5} />
+              </VStack>
+            );
+          })}
         </VStack>
-      </Center>
+      </Box>
     );
 
   if (error) return <Text>An error occured </Text>;
 
   const viewSingleNFT = (nft) => {
-    console.log("Pressed");
     navigation.navigate("Dashboard", {
       screen: "NFTs",
       params: {
@@ -105,7 +117,7 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <Box px={6} safeArea w="100%">
+    <Box p={6} w="100%">
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}

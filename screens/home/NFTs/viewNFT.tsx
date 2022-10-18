@@ -6,7 +6,7 @@ import { useStore } from "../../../store";
 import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { ethers } from "ethers";
 
-const ViewNFT = ({ route }) => {
+const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
   const { connector, privider, signer } = useStore();
 
@@ -16,6 +16,7 @@ const ViewNFT = ({ route }) => {
       marketplaceJSON.abi,
       signer
     );
+    console.log("1");
 
     console.log("Price: ", nft.price);
     /* user will be prompted to pay the asking proces to complete the transaction */
@@ -23,9 +24,14 @@ const ViewNFT = ({ route }) => {
     const transaction = await contract.createMarketSale(nft.tokenId, {
       value: price,
     });
+    console.log({ transaction });
+    console.log("2");
     await transaction.wait();
-    // loadNFTs();
-    console.log("Successfully bought NFT");
+    console.log("3");
+
+    navigation.navigate("Dashboard", {
+      screen: "Own",
+    });
   };
 
   const getTransactions = () => {

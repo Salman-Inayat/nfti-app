@@ -2,11 +2,11 @@ import React from "react";
 import { IconButton, Icon } from "native-base";
 import { useStore } from "../../../store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Home from "./home";
 import ViewNFT from "./viewNFT";
 import ResellNFT from "./resellNFT";
+import { primaryColor } from "../../../theme/colors";
 
 const NFTs = ({ navigation }) => {
   const { logout } = useStore();
@@ -14,10 +14,13 @@ const NFTs = ({ navigation }) => {
   const Tab = createNativeStackNavigator();
 
   const headerOptions = {
-    headerMode: "none",
-    navigationOptions: {
-      headerVisible: false,
-    },
+    // headerMode: "none",
+    // navigationOptions: {
+    //   headerVisible: false,
+    // },
+    // headerTintColor: primaryColor,
+    // headerStyle: { backgroundColor: "transparent", width: 300 },
+    headerTitleAlign: "center",
   };
 
   return (

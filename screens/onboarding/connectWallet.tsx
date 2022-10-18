@@ -34,9 +34,6 @@ const ConnectWalletScreen = ({ navigation }) => {
   useEffect(() => {
     if (connector.connected) {
       const walletProvider = new WalletConnectProvider({
-        // rpc: {
-        //   5: "https://rpc.goerli.mudit.blog/",
-        // },
         chainId: 5,
         infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
         connector: connector,

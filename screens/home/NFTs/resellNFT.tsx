@@ -20,7 +20,7 @@ import { ethers } from "ethers";
 import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { useStore } from "../../../store";
 
-const ResellNFT = ({ route }) => {
+const ResellNFT = ({ route, navigation }) => {
   const { nft } = route.params;
   const [price, setPrice] = useState();
   const { connector, privider, signer } = useStore();
@@ -45,6 +45,12 @@ const ResellNFT = ({ route }) => {
       value: listingPrice,
     });
     await transaction.wait();
+    navigation.navigate("Dashboard", {
+      screen: "NFTs",
+      params: {
+        screen: "Home",
+      },
+    });
   }
 
   return (
