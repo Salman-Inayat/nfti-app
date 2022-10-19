@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import axios from "axios";
 import { marketplaceAddress, marketplaceJSON } from "../../config";
+import ConnectWalletAlert from "../../components/ConnectWalletAlert";
+import NFTNotFound from "../../components/NotFound";
 
 const OwnNFTs = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
@@ -69,14 +71,13 @@ const OwnNFTs = ({ navigation }) => {
 
   const { isLoading, error, data } = useQuery(["own-nfts"], loadNFTs);
 
-  if (!isLoading && !data.length)
+  if (!connector?.connected) {
     return (
-      <Box safeArea px={6}>
-        <Center>
-          <Text fontSize="lg">No NFTs owned</Text>
-        </Center>
-      </Box>
+      <ConnectWalletAlert alertText="Please attach your wallet to view NFTs you own" />
     );
+  }
+
+  if (!isLoading && !data?.length) return <NFTNotFound />;
 
   if (isLoading)
     return (
@@ -127,6 +128,7 @@ const OwnNFTs = ({ navigation }) => {
                   onPress={() => {
                     resellNFT(nft);
                   }}
+                  borderRadius={50}
                 >
                   Resell
                 </Button>

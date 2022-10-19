@@ -74,7 +74,9 @@ const ResellNFT = ({ route, navigation }) => {
           keyboardType="numeric"
         />
       </FormControl>
-      <Button onPress={() => listNFTForSale()}>List</Button>
+      <Button onPress={() => listNFTForSale()} borderRadius={50}>
+        List
+      </Button>
     </Box>
   );
 };

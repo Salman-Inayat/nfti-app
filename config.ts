@@ -1,6 +1,7 @@
 // export const marketplaceAddress = "0xEe221a358D28637B0C686a51Be0b89181372E961";
 // export const marketplaceAddress = "0x81eaeC52C7E125B9403Fb25ef5A92bbe4a865Cd20";
 export const marketplaceAddress = "0xB8eC06639806Ff0eF285f18240038c34cbB90A4b";
+export const contractNetwork = "goerli";
 
 export const marketplaceJSON = {
   _format: "hh-sol-artifact-1",

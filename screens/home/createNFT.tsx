@@ -7,6 +7,7 @@ import {
   useToast,
   Center,
   Container,
+  Text,
   Box,
 } from "native-base";
 
@@ -21,6 +22,7 @@ import { uploadToIPFS } from "../../utils/ipfsClient";
 import { ethers } from "ethers";
 import { marketplaceAddress, marketplaceJSON } from "../../config";
 import Toaster from "../../components/Toaster";
+import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 
 // import { create as ipfsHttpClient } from "ipfs-http-client";
 
@@ -59,13 +61,11 @@ const CreateNFT = () => {
     const base64 = result.base64;
     const imageURL = await uploadToIPFS(base64);
     setImageURL(imageURL);
-    console.log(imageURL);
   };
 
   async function listNFTForSale(formData) {
     const { name, description, price } = formData;
 
-    /* first, upload metadata to IPFS */
     const data = {
       name,
       description,
@@ -73,23 +73,18 @@ const CreateNFT = () => {
     };
 
     const contentURL = await uploadToIPFS(data);
-    console.log(contentURL);
 
-    /* create the NFT */
     const priceInETH = ethers.utils.parseUnits(price, "ether");
-    console.log({ priceInETH });
     let contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
       signer
     );
     let listingPrice = await contract.getListingPrice();
-    console.log({ listingPrice });
     listingPrice = listingPrice.toString();
     let transaction = await contract.createToken(contentURL, priceInETH, {
       value: listingPrice,
     });
-    console.log({ transaction });
     await transaction.wait();
 
     toast.show({
@@ -97,6 +92,12 @@ const CreateNFT = () => {
         return <Toaster statement="NFT created successfully" />;
       },
     });
+  }
+
+  if (!connector?.connected) {
+    return (
+      <ConnectWalletAlert alertText="Please attach your wallet to create NFT" />
+    );
   }
 
   return (

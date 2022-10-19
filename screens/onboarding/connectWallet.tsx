@@ -49,26 +49,6 @@ const ConnectWalletScreen = ({ navigation }) => {
 
         const signer = provider.getSigner();
 
-        // provider.getBalance(res[0]).then((balance) => {
-        //   // convert a currency unit from wei to ether
-        //   const balanceInEth = ethers.utils.formatEther(balance);
-        //   console.log(`balance: ${balanceInEth} ETH`);
-        // });
-
-        // const marketplace = new ethers.Contract(
-        //   marketplaceAddress,
-        //   marketplaceJSON.abi,
-        //   provider
-        // );
-
-        // const fetchListingPrice = async () => {
-        //   return await marketplace.getListingPrice();
-        // };
-
-        // fetchListingPrice()
-        //   .then((res) => console.log(res.toString()))
-        //   .catch((err) => console.log(err));
-
         const data = {
           connector,
           provider,

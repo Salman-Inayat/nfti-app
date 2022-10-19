@@ -119,7 +119,7 @@ export const useStore = create((set) => ({
   //   }
   // },
   setUserWalletConnection: async (data) => {
-    const { connector, provider, signer, navigation } = data;
+    const { connector, provider, signer } = data;
     set({
       connector,
       provider,

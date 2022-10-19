@@ -10,6 +10,7 @@ import {
   HStack,
   Pressable,
   Heading,
+  useDisclose,
 } from "native-base";
 import {
   View,
@@ -25,13 +26,19 @@ import { useQuery } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import axios from "axios";
-import { marketplaceAddress, marketplaceJSON } from "../../../config";
+import {
+  contractNetwork,
+  marketplaceAddress,
+  marketplaceJSON,
+} from "../../../config";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { getActionFromState } from "@react-navigation/native";
+import ConnectWalletActionSheet from "../../../components/ActionSheet";
 
 const Home = ({ navigation }) => {
   const { connector, provider } = useStore();
   const [walletBalance, setWalletBalance] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclose();
+
   // const [favoriteNFTs, setFavoriteNFTs] = useState([]);
 
   // useEffect(() => {
@@ -56,9 +63,13 @@ const Home = ({ navigation }) => {
     setWalletBalance(balanceInEth.substring(0, 4));
   };
 
-  (async () => await getWalletBalance(connector.accounts[0]))();
+  if (connector?.connected) {
+    (async () => await getWalletBalance(connector.accounts[0]))();
+  }
 
   const loadNFTs = async () => {
+    const provider = ethers.providers.getDefaultProvider(contractNetwork);
+
     const contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
@@ -297,6 +308,33 @@ const Home = ({ navigation }) => {
     );
   };
 
+  const BalanceBox = () => {
+    return (
+      <HStack space={120}>
+        <Box>
+          <Text color="white" fontSize="sm">
+            {" "}
+            Current balance
+          </Text>
+          <Heading color="white" size="xl" style={styles.balance_text} mt={2}>
+            {walletBalance} ETH
+          </Heading>
+        </Box>
+        <MaterialCommunityIcons name="ethereum" size={70} color="white" />
+      </HStack>
+    );
+  };
+
+  const WalletNotConnected = () => {
+    return (
+      <Box>
+        <Text color="white" fontSize="md" onPress={onOpen}>
+          Connect your wallet to view balance
+        </Text>
+      </Box>
+    );
+  };
+
   return (
     <Box px={6} safeArea w="100%">
       <ScrollView
@@ -310,27 +348,7 @@ const Home = ({ navigation }) => {
             imageStyle={{ borderRadius: 20 }}
           >
             <Box style={styles.inner_box}>
-              <HStack space={120}>
-                <Box>
-                  <Text color="white" fontSize="sm">
-                    {" "}
-                    Current balance
-                  </Text>
-                  <Heading
-                    color="white"
-                    size="xl"
-                    style={styles.balance_text}
-                    mt={2}
-                  >
-                    {walletBalance} ETH
-                  </Heading>
-                </Box>
-                <MaterialCommunityIcons
-                  name="ethereum"
-                  size={70}
-                  color="white"
-                />
-              </HStack>
+              {connector?.connected ? <BalanceBox /> : <WalletNotConnected />}
             </Box>
           </ImageBackground>
         </Box>
@@ -346,6 +364,11 @@ const Home = ({ navigation }) => {
           }}
         />
       </ScrollView>
+      <ConnectWalletActionSheet
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+      />
     </Box>
   );
 };

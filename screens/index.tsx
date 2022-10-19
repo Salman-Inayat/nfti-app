@@ -13,7 +13,7 @@ const AppScreen = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="ConnectWallet"
+        initialRouteName="Dashboard"
         screenOptions={{
           headerShown: false,
         }}
