@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import { View } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 import NFTs from "./NFTs";
 import OwnNFTs from "./ownNFTs";
@@ -51,7 +52,8 @@ const HomeScreen = ({ navigation }) => {
           );
         case "Create":
           return (
-            <MaterialIcons name="add-circle" size={60} color={primaryColor} />
+            // <MaterialIcons name="add-circle" size={60} color={primaryColor} />
+            <AntDesign name="pluscircle" size={50} color={primaryColor} />
           );
         case "Transactions":
           return (

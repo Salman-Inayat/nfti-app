@@ -9,7 +9,7 @@ import {
 } from "native-base";
 import React from "react";
 import { useStore } from "../../store";
-import { shortenAddress } from "../../utils/addressShortening";
+import { shortenAddress } from "../../utils/walletUtils";
 import * as Clipboard from "expo-clipboard";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ethers } from "ethers";

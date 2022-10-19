@@ -14,12 +14,6 @@ const NFTs = ({ navigation }) => {
   const Tab = createNativeStackNavigator();
 
   const headerOptions = {
-    // headerMode: "none",
-    // navigationOptions: {
-    //   headerVisible: false,
-    // },
-    // headerTintColor: primaryColor,
-    // headerStyle: { backgroundColor: "transparent", width: 300 },
     headerTitleAlign: "center",
   };
 
