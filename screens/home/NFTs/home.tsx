@@ -32,18 +32,23 @@ import { getActionFromState } from "@react-navigation/native";
 const Home = ({ navigation }) => {
   const { connector, provider } = useStore();
   const [walletBalance, setWalletBalance] = useState("");
-  const [favoriteNFTs, setFavoriteNFTs] = useState([]);
+  // const [favoriteNFTs, setFavoriteNFTs] = useState([]);
 
-  useEffect(() => {
-    fetchFavoriteNFTs();
-  }, []);
+  // useEffect(() => {
+  //   fetchFavoriteNFTs();
+  // }, []);
 
-  const fetchFavoriteNFTs = async () => {
-    let result = await AsyncStorage.getItem("favoriteNFTs");
-    const favoriteNFTs = JSON.parse(result);
-    console.log("Favorite NFTs: ", favoriteNFTs);
-    setFavoriteNFTs(favoriteNFTs);
-  };
+  // const fetchFavoriteNFTs = async () => {
+  //   let result = await AsyncStorage.getItem("favoriteNFTs");
+
+  //   const parsedResult = JSON.parse(result);
+  //   console.log("Parsed result: ", parsedResult);
+  //   if (parsedResult.address === connector.accounts[0]) {
+  //     const favoriteNFTs = parsedResult?.nfts;
+  //     console.log("Favorite NFTs: ", favoriteNFTs);
+  //     setFavoriteNFTs(favoriteNFTs);
+  //   }
+  // };
 
   const getWalletBalance = async (address: any) => {
     const balance = await provider.getBalance(address).then();
@@ -141,45 +146,101 @@ const Home = ({ navigation }) => {
     });
   };
 
-  const manageFavorites = async (nft: { tokenId: any }) => {
-    await AsyncStorage.getItem("favoriteNFTs", (err, result) => {
-      const nfts = [nft];
-      if (result !== null) {
-        const favorites = JSON.parse(result);
-        if (
-          favorites?.some(
-            (item: { tokenId: any }) => item.tokenId === nft.tokenId
-          )
-        ) {
-          var newNFTs = JSON.parse(result).filter(
-            (item: { tokenId: any }) => item.tokenId !== nft.tokenId
-          );
-          AsyncStorage.setItem("favoriteNFTs", JSON.stringify(newNFTs));
+  // const manageFavorites = async (nft: { tokenId: any }) => {
+  //   await AsyncStorage.getItem("favoriteNFTs", (err, result) => {
+  //     const nfts = {
+  //       address: connector.accounts[0],
+  //       nfts: [nft],
+  //     };
+  //     if (result !== null) {
+  //       const parsedResult = JSON.parse(result);
+  //       if (parsedResult.address === connector.accounts[0]) {
+  //         if (
+  //           parsedResult.nfts?.some(
+  //             (item: { tokenId: any }) => item.tokenId === nft.tokenId
+  //           )
+  //         ) {
+  //           let newNFTs = parsedResult.nfts.filter(
+  //             (item: { tokenId: any }) => item.tokenId !== nft.tokenId
+  //           );
 
-          fetchFavoriteNFTs();
-        } else {
-          var newNFTs = JSON.parse(result).concat(nfts);
-          AsyncStorage.setItem("favoriteNFTs", JSON.stringify(newNFTs));
-          fetchFavoriteNFTs();
-        }
-      } else {
-        AsyncStorage.setItem("favoriteNFTs", JSON.stringify(nfts));
-        fetchFavoriteNFTs();
-      }
-    });
-  };
+  //           let newFavoriteNFTS = {
+  //             address: connector.accounts[0],
+  //             nfts: newNFTs,
+  //           };
 
-  const isNFTFavorite = (nft: { tokenId: any }) => {
-    const isPresent = favoriteNFTs?.some(
-      (item) => item.tokenId === nft.tokenId
-    );
+  //           AsyncStorage.setItem(
+  //             "favoriteNFTs",
+  //             JSON.stringify(newFavoriteNFTS)
+  //           );
 
-    return isPresent;
-  };
+  //           fetchFavoriteNFTs();
+  //         } else {
+  //           var newNFTs = parsedResult.nfts.concat(nfts.nfts);
 
-  const emptyStorage = async () => {
-    await AsyncStorage.removeItem("favoriteNFTs");
-  };
+  //           let newFavoriteNFTS = {
+  //             address: connector.accounts[0],
+  //             nfts: newNFTs,
+  //           };
+  //           AsyncStorage.setItem(
+  //             "favoriteNFTs",
+  //             JSON.stringify(newFavoriteNFTS)
+  //           );
+  //           fetchFavoriteNFTs();
+  //         }
+  //       } else {
+  //         if (
+  //           parsedResult.nfts?.some(
+  //             (item: { tokenId: any }) => item.tokenId === nft.tokenId
+  //           )
+  //         ) {
+  //           let newNFTs = parsedResult.nfts.filter(
+  //             (item: { tokenId: any }) => item.tokenId !== nft.tokenId
+  //           );
+
+  //           let newFavoriteNFTS = {
+  //             address: connector.accounts[0],
+  //             nfts: newNFTs,
+  //           };
+
+  //           AsyncStorage.setItem(
+  //             "favoriteNFTs",
+  //             JSON.stringify(newFavoriteNFTS)
+  //           );
+
+  //           fetchFavoriteNFTs();
+  //         } else {
+  //           var newNFTs = parsedResult.nfts.concat(nfts.nfts);
+
+  //           let newFavoriteNFTS = {
+  //             address: connector.accounts[0],
+  //             nfts: newNFTs,
+  //           };
+  //           AsyncStorage.setItem(
+  //             "favoriteNFTs",
+  //             JSON.stringify(newFavoriteNFTS)
+  //           );
+  //           fetchFavoriteNFTs();
+  //         }
+  //       }
+  //     } else {
+  //       AsyncStorage.setItem("favoriteNFTs", JSON.stringify(nfts));
+  //       fetchFavoriteNFTs();
+  //     }
+  //   });
+  // };
+
+  // const isNFTFavorite = (nft: { tokenId: any }) => {
+  //   const isPresent = favoriteNFTs?.some(
+  //     (item) => item.tokenId === nft.tokenId
+  //   );
+
+  //   return isPresent;
+  // };
+
+  // const emptyStorage = async () => {
+  //   await AsyncStorage.removeItem("favoriteNFTs");
+  // };
 
   const renderItem = (nft: { item: any }) => {
     const { item } = nft;
@@ -222,12 +283,12 @@ const Home = ({ navigation }) => {
                 />
                 <Text fontSize="sm">{item.price} ETH</Text>
               </HStack>
-              <AntDesign
+              {/* <AntDesign
                 name={isNFTFavorite(item) ? "heart" : "hearto"}
                 size={18}
                 color={isNFTFavorite(item) ? "red" : "black"}
                 onPress={async () => await manageFavorites(item)}
-              />
+              /> */}
             </HStack>
             {/* <Button onPress={async () => await emptyStorage()}>get</Button> */}
           </Box>

@@ -14,7 +14,7 @@ import * as Clipboard from "expo-clipboard";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ethers } from "ethers";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   const { connector, provider } = useStore();
   console.log({ connector });
 
@@ -38,6 +38,11 @@ const Profile = () => {
     const balanceInEth = ethers.utils.formatEther(balance);
     console.log(`balance: ${balanceInEth} ETH`);
     return balanceInEth;
+  };
+
+  const removeWallet = () => {
+    connector.killSession();
+    navigation.navigate("ConnectWallet");
   };
 
   return (
@@ -65,6 +70,7 @@ const Profile = () => {
         <Text>Wallet:</Text>
         <Button onPress={getHistory}>Get history</Button>
         <Button onPress={getBalance}>Get balance</Button>
+        <Button onPress={removeWallet}>Remove wallet</Button>
       </VStack>
     </Box>
   );
