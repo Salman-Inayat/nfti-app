@@ -6,6 +6,7 @@ import {
   VStack,
   HStack,
   Button,
+  useToast,
 } from "native-base";
 import React, { useEffect } from "react";
 import { useStore } from "../../store";
@@ -18,17 +19,32 @@ import {
 } from "../../config";
 import axios from "axios";
 import ProfileWalletNotConnected from "../../components/ProfileWalletNotConnected";
+import { shortenAddress } from "../../utils/walletUtils";
+import { MaterialIcons } from "@expo/vector-icons";
+import { SvgUri } from "react-native-svg";
 
 const Profile = ({ navigation }) => {
   const { connector, provider } = useStore();
+  const toast = useToast();
 
   const copyToClipboard = async (text: string) => {
-    await Clipboard.setStringAsync(text);
+    // await Clipboard?.setStringAsync(text);
+    if (!toast.isActive("copied")) {
+      toast.show({
+        id: "copied",
+        render: () => {
+          return (
+            <Box bg="white" px="2" py="2" rounded="md" mb={5} shadow={5}>
+              Copied to clipboard
+            </Box>
+          );
+        },
+      });
+    }
   };
 
   const loadNFTs = async () => {
     const provider = ethers.providers.getDefaultProvider(contractNetwork);
-    console.log(provider);
     const contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
@@ -73,41 +89,66 @@ const Profile = ({ navigation }) => {
     loadNFTs();
   }, []);
 
-  const removeWallet = () => {
-    connector.killSession();
-  };
-
   if (!connector?.connected) {
     return <ProfileWalletNotConnected />;
   }
   return (
-    <Box px={6} safeArea w="100%">
-      <Image
-        size={140}
-        borderRadius={100}
-        source={{
-          uri: "https://wallpaperaccess.com/full/317501.jpg",
-        }}
-        alt="Alternate Text"
-      />
-      <VStack space={4} py={4} px={2}>
-        {/* <HStack space={2} alignItems="center">
-          <Text>{shortenAddress(connector.accounts[0])}</Text>
-          <MaterialIcons
-            name="content-copy"
-            size={18}
-            color="grey"
-            onPress={() => {
-              copyToClipboard(connector.accounts[0]);
+    <Box px={6} safeArea w="100%" h="100%">
+      <VStack space={2} h="100%">
+        <Box display="flex" alignItems="center" justifyContent="center" h="40%">
+          <Image
+            size={140}
+            borderRadius={100}
+            source={{
+              uri: "https://wallpaperaccess.com/full/317501.jpg",
             }}
+            alt="Alternate Text"
           />
-        </HStack>
-        <Text>Wallet:</Text>
-        <Button onPress={getHistory}>Get history</Button>
-        <Button onPress={getBalance}>Get balance</Button>*/}
-        <Button onPress={removeWallet} borderRadius={50}>
-          Remove wallet
-        </Button>
+        </Box>
+        <VStack space={4} py={4} px={2}>
+          <HStack space={2} alignItems="center">
+            <Text>{shortenAddress(connector.accounts[0])}</Text>
+            <MaterialIcons
+              name="content-copy"
+              size={18}
+              color="grey"
+              onPress={() => {
+                copyToClipboard(connector.accounts[0]);
+              }}
+            />
+          </HStack>
+          <HStack space={2} alignItems="center">
+            <Text>Address</Text>
+            <Text>{connector.accounts[0]}</Text>
+          </HStack>
+          <HStack space={2} alignItems="center">
+            <Text>Network</Text>
+            <Text>{contractNetwork}</Text>
+          </HStack>
+          <HStack space={2} alignItems="center">
+            <Text>Wallet</Text>
+            <Text>{connector._peerMeta.name}</Text>
+            {/* <Image
+              size={100}
+              // borderRadius={100}
+              source={{
+                uri: connector._peerMeta.icons[0],
+              }}
+              alt="wallet image"
+            /> */}
+
+            {/* <SvgUri
+              width="100%"
+              height="100%"
+              source={{ uri: connector._peerMeta.icons[0] }}
+              // uri="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg"
+            /> */}
+          </HStack>
+
+          {/* <Button onPress={removeWallet} borderRadius={50}>
+            Remove wallet
+          </Button> */}
+        </VStack>
       </VStack>
     </Box>
   );

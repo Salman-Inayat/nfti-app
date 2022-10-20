@@ -21,11 +21,22 @@ import { marketplaceAddress, marketplaceJSON } from "../../config";
 import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 import NFTNotFound from "../../components/NotFound";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+import { useRefetchOnFocus } from "../../hooks/useRefetchOnFocus";
 
 const OwnNFTs = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [nfts, setNfts] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadNFTs();
+    }, [])
+  );
 
   const loadNFTs = async () => {
+    // setIsLoading(true);
     const contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
@@ -57,7 +68,9 @@ const OwnNFTs = ({ navigation }) => {
     );
 
     console.log(items);
-    return items;
+    setNfts(items);
+    setIsLoading(false);
+    // return items;
   };
 
   const resellNFT = (nft) => {
@@ -72,7 +85,9 @@ const OwnNFTs = ({ navigation }) => {
     });
   };
 
-  const { isLoading, error, data } = useQuery(["own-nfts"], loadNFTs);
+  // const { isLoading, error, data, refetch } = useQuery(["own-nfts"], loadNFTs);
+
+  // useRefetchOnFocus(refetch);
 
   if (!connector?.connected) {
     return (
@@ -80,9 +95,9 @@ const OwnNFTs = ({ navigation }) => {
     );
   }
 
-  if (!isLoading && !data?.length) return <NFTNotFound />;
+  if (!isLoading && !nfts?.length) return <NFTNotFound />;
 
-  if (isLoading)
+  if (isLoading && !nfts.length)
     return (
       <Box safeArea w="100%" px={5}>
         <VStack h="100%" space={6}>
@@ -133,12 +148,12 @@ const OwnNFTs = ({ navigation }) => {
       </Box>
     );
 
-  if (error) return <Text>An error occured </Text>;
+  // if (error) return <Text>An error occured </Text>;
 
   return (
     <Box safeArea px={6}>
       <VStack h="100%" space={4}>
-        {data?.map((nft) => {
+        {nfts?.map((nft, index) => {
           return (
             <HStack
               w="100%"
@@ -155,6 +170,7 @@ const OwnNFTs = ({ navigation }) => {
               _light={{
                 borderColor: "coolGray.200",
               }}
+              key={index}
             >
               <Image
                 source={{

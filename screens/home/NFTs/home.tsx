@@ -33,11 +33,22 @@ import {
 } from "../../../config";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import ConnectWalletActionSheet from "../../../components/ActionSheet";
+import BalanceContainer from "../../../components/BalanceContainer";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Home = ({ navigation }) => {
   const { connector, provider } = useStore();
   const [walletBalance, setWalletBalance] = useState("");
   const { isOpen, onOpen, onClose } = useDisclose();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [nfts, setNfts] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadNFTs();
+    }, [])
+  );
 
   // const [favoriteNFTs, setFavoriteNFTs] = useState([]);
 
@@ -86,6 +97,7 @@ const Home = ({ navigation }) => {
           seller: any;
           owner: any;
         }) => {
+          console.log({ item });
           const tokenUri = await contract.tokenURI(item.tokenId);
           const meta = await axios.get(tokenUri);
           const price = ethers.utils.formatUnits(
@@ -106,14 +118,16 @@ const Home = ({ navigation }) => {
       )
     );
 
-    return items;
+    setIsLoading(false);
+    setNfts(items);
+    // return items;
   };
 
-  const { isLoading, error, data } = useQuery(["marketplace-nfts"], loadNFTs);
+  // const { isLoading, error, data } = useQuery(["marketplace-nfts"], loadNFTs);
 
-  if (!isLoading && !data?.length) return <Text>No items in marketplace</Text>;
+  if (!isLoading && !nfts?.length) return <Text>No items in marketplace</Text>;
 
-  if (isLoading)
+  if (isLoading && !nfts?.length)
     return (
       <Box w="100%" mt={5} px={5} py={3}>
         <VStack space={6} w="100%">
@@ -143,7 +157,7 @@ const Home = ({ navigation }) => {
       </Box>
     );
 
-  if (error) return <Text>An error occured </Text>;
+  // if (error) return <Text>An error occured </Text>;
 
   const viewSingleNFT = (nft: any) => {
     navigation.navigate("Dashboard", {
@@ -352,20 +366,10 @@ const Home = ({ navigation }) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <Box style={styles.balance_box} alignItems="center">
-          <ImageBackground
-            source={require("../../../assets/images/balance_box_background.png")}
-            style={styles.image}
-            imageStyle={{ borderRadius: 20 }}
-          >
-            <Box style={styles.inner_box}>
-              {connector?.connected ? <BalanceBox /> : <WalletNotConnected />}
-            </Box>
-          </ImageBackground>
-        </Box>
+        <BalanceContainer />
 
         <FlatList
-          data={data}
+          data={nfts}
           renderItem={renderItem}
           numColumns={2}
           keyExtractor={(item) => item.tokenId}

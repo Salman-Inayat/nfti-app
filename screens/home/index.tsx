@@ -10,16 +10,56 @@ import CreateNFT from "./createNFT";
 import About from "./about";
 import Profile from "./profile";
 import { primaryColor } from "../../theme/colors";
+import { Icon, IconButton, useDisclose } from "native-base";
+import LogoutActionSheet from "../../components/LogoutActionSheet";
+import { Alert } from "react-native";
 
 const HomeScreen = ({ navigation }) => {
-  const { logout } = useStore();
+  const { logout, connector } = useStore();
+  const { isOpen, onOpen, onClose } = useDisclose();
 
   const Tab = createBottomTabNavigator();
+
+  const handleLogout = () => {
+    connector.killSession();
+    logout();
+  };
 
   const headerOptions = {
     // headerTintColor: primaryColor,
     headerStyle: { backgroundColor: "transparent" },
     headerTitleAlign: "center",
+    headerRight: () => {
+      return (
+        connector?.connected && (
+          <>
+            <IconButton
+              icon={
+                <Icon
+                  as={MaterialIcons}
+                  name="logout"
+                  size={30}
+                  onPress={() => {
+                    Alert.alert("", "Are you sure you want to logout?", [
+                      {
+                        text: "Cancel",
+                        onPress: () => {},
+                        style: "cancel",
+                      },
+                      {
+                        text: "Logout",
+                        onPress: () => handleLogout(),
+                        style: "destructive",
+                      },
+                    ]);
+                  }}
+                />
+              }
+            />
+          </>
+        )
+      );
+    },
   };
 
   const screenOptions = ({ route }) => ({
@@ -44,17 +84,9 @@ const HomeScreen = ({ navigation }) => {
             />
           );
         case "Create":
-          return (
-            // <MaterialIcons name="add-circle" size={60} color={primaryColor} />
-            <AntDesign name="pluscircle" size={50} color={primaryColor} />
-          );
+          return <AntDesign name="pluscircle" size={50} color={primaryColor} />;
         case "About":
           return (
-            // <MaterialIcons
-            //   name="menu"
-            //   size={30}
-            //   color={focused ? primaryColor : color}
-            // />
             <Feather
               name="menu"
               size={30}
@@ -93,6 +125,7 @@ const HomeScreen = ({ navigation }) => {
       <Tab.Screen name="Create" component={CreateNFT} options={headerOptions} />
       <Tab.Screen name="Profile" component={Profile} options={headerOptions} />
       <Tab.Screen name="About" component={About} options={headerOptions} />
+      {/* <LogoutActionSheet onClose={onClose} isOpen={isOpen} onOpen={onOpen} /> */}
     </Tab.Navigator>
   );
 };

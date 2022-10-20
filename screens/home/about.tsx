@@ -28,7 +28,7 @@ function About() {
           resizeMode="contain"
         />
         <Heading size="md" textAlign="center">
-          We are building an an open digital economy
+          We are building an open digital economy
         </Heading>
 
         <Text fontSize="md" textAlign="center">

@@ -71,10 +71,18 @@ export const useStore = create((set) => ({
       console.error(err);
     }
   },
+  login: async (navigation) => {
+    set({
+      isLoggedIn: true,
+    });
+  },
   logout: async (navigation) => {
-    set({ isLoggedIn: false, userId: null });
-    setItemInAsyncStorage("token", "");
-    navigation.navigate("Auth");
+    // set({ isLoggedIn: false, userId: null });
+    // setItemInAsyncStorage("token", "");
+    // navigation.navigate("Auth");
+    set({
+      isLoggedIn: false,
+    });
   },
   attachWallet: async (data: any, navigation) => {
     try {
@@ -124,6 +132,7 @@ export const useStore = create((set) => ({
       connector,
       provider,
       signer,
+      isLoggedIn: true,
     });
 
     // const walletData = {
