@@ -22,15 +22,16 @@ import { useStore } from "../../../store";
 
 const ResellNFT = ({ route, navigation }) => {
   const { nft } = route.params;
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState("");
   const { connector, privider, signer } = useStore();
 
   const handlePriceChange = (text) => {
+    console.log(typeof text);
     setPrice(text);
   };
 
   async function listNFTForSale() {
-    if (!price) return;
+    if (price === "") return;
 
     const priceFormatted = ethers.utils.parseUnits(price, "ether");
     let contract = new ethers.Contract(
@@ -54,29 +55,36 @@ const ResellNFT = ({ route, navigation }) => {
   }
 
   return (
-    <Box px={6} safeArea w="100%">
-      <Image
-        height={500}
-        width={500}
-        source={{
-          uri: nft.image,
-        }}
-        alt="Alternate Text"
-        size="2xl"
-      />
-
-      <FormControl mt={10}>
-        <FormControl.Label>Price</FormControl.Label>
-        <Input
-          placeholder="Price in ETH"
-          onChangeText={(text) => handlePriceChange(text)}
-          value={price}
-          keyboardType="numeric"
+    <Box px={6} safeArea w="100%" display="flex" alignItems="center">
+      <VStack space={4} p={2} alignItems="center" w="80%">
+        <Image
+          borderRadius={10}
+          source={{
+            uri: nft.image,
+          }}
+          alt="Alternate Text"
+          size="2xl"
         />
-      </FormControl>
-      <Button onPress={() => listNFTForSale()} borderRadius={50}>
-        List
-      </Button>
+
+        <VStack space={8} w="100%">
+          <FormControl mt={10}>
+            <FormControl.Label>Price</FormControl.Label>
+            <Input
+              placeholder="Enter new price in ETH"
+              onChangeText={(text) => handlePriceChange(text)}
+              value={price}
+              keyboardType="numeric"
+            />
+          </FormControl>
+          <Button
+            onPress={() => listNFTForSale()}
+            borderRadius={50}
+            isDisabled={price !== "" ? false : true}
+          >
+            Resell
+          </Button>
+        </VStack>
+      </VStack>
     </Box>
   );
 };

@@ -101,75 +101,76 @@ const CreateNFT = () => {
   }
 
   return (
-    <Box px={6} safeArea>
-      <VStack space={3} mt="5">
-        <FormControl isInvalid={"name" in errors}>
-          <FormControl.Label>Name</FormControl.Label>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                onBlur={onBlur}
-                placeholder="Name"
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="name"
-            defaultValue=""
-          />
-          <FormControl.ErrorMessage>
-            {errors.name?.message}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl isInvalid={"description" in errors}>
-          <FormControl.Label>Description</FormControl.Label>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                onBlur={onBlur}
-                placeholder="Descriotion"
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="description"
-            defaultValue=""
-          />
-          <FormControl.ErrorMessage>
-            {errors.description?.message}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl isInvalid={"price" in errors}>
-          <FormControl.Label>Price</FormControl.Label>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                onBlur={onBlur}
-                placeholder="Price"
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="price"
-            defaultValue=""
-          />
-          <FormControl.ErrorMessage>
-            {errors.name?.message}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <Button onPress={pickImage}>Pick Image</Button>
-        {/* {image && (
+    <Box px={6}>
+      <VStack space={2} justifyContent="space-between" h="100%" py={5}>
+        <VStack space={4} my={4}>
+          <FormControl isInvalid={"name" in errors}>
+            <FormControl.Label>Name</FormControl.Label>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  onBlur={onBlur}
+                  placeholder="Name"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+              name="name"
+              defaultValue=""
+            />
+            <FormControl.ErrorMessage>
+              {errors.name?.message}
+            </FormControl.ErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={"description" in errors}>
+            <FormControl.Label>Description</FormControl.Label>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  onBlur={onBlur}
+                  placeholder="Description"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+              name="description"
+              defaultValue=""
+            />
+            <FormControl.ErrorMessage>
+              {errors.description?.message}
+            </FormControl.ErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={"price" in errors}>
+            <FormControl.Label>Price</FormControl.Label>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  onBlur={onBlur}
+                  placeholder="Price"
+                  onChangeText={onChange}
+                  value={value}
+                  keyboardType="numeric"
+                />
+              )}
+              name="price"
+              defaultValue=""
+            />
+            <FormControl.ErrorMessage>
+              {errors.name?.message}
+            </FormControl.ErrorMessage>
+          </FormControl>
+          <Button onPress={pickImage} borderRadius={50}>
+            Pick Image
+          </Button>
+          {/* {image && (
           <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
         )} */}
+        </VStack>
 
-        <Button
-          mt="2"
-          colorScheme="indigo"
-          onPress={handleSubmit(listNFTForSale)}
-        >
+        <Button onPress={handleSubmit(listNFTForSale)} borderRadius={50}>
           List NFT
         </Button>
       </VStack>

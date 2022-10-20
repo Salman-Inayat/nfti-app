@@ -1,20 +1,13 @@
 import React from "react";
-import { Text, Container, IconButton, Icon } from "native-base";
 import { useStore } from "../../store";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  BottomTabBar,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
-import { View } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 
 import NFTs from "./NFTs";
 import OwnNFTs from "./ownNFTs";
 import CreateNFT from "./createNFT";
-import Transactions from "./transactions";
+import About from "./about";
 import Profile from "./profile";
 import { primaryColor } from "../../theme/colors";
 
@@ -55,10 +48,15 @@ const HomeScreen = ({ navigation }) => {
             // <MaterialIcons name="add-circle" size={60} color={primaryColor} />
             <AntDesign name="pluscircle" size={50} color={primaryColor} />
           );
-        case "Transactions":
+        case "About":
           return (
-            <MaterialIcons
-              name="person"
+            // <MaterialIcons
+            //   name="menu"
+            //   size={30}
+            //   color={focused ? primaryColor : color}
+            // />
+            <Feather
+              name="menu"
               size={30}
               color={focused ? primaryColor : color}
             />
@@ -93,12 +91,8 @@ const HomeScreen = ({ navigation }) => {
       />
       <Tab.Screen name="Own" component={OwnNFTs} options={headerOptions} />
       <Tab.Screen name="Create" component={CreateNFT} options={headerOptions} />
-      <Tab.Screen
-        name="Transactions"
-        component={Transactions}
-        options={headerOptions}
-      />
       <Tab.Screen name="Profile" component={Profile} options={headerOptions} />
+      <Tab.Screen name="About" component={About} options={headerOptions} />
     </Tab.Navigator>
   );
 };

@@ -256,7 +256,7 @@ const Home = ({ navigation }) => {
   const renderItem = (nft: { item: any }) => {
     const { item } = nft;
     return (
-      <Pressable onPress={() => viewSingleNFT(item)} width="50%" px={1} py={2}>
+      <Pressable onPress={() => viewSingleNFT(item)} width="50%" px={2} py={2}>
         <VStack
           w="100%"
           borderWidth="1"
@@ -267,6 +267,17 @@ const Home = ({ navigation }) => {
           }}
           _light={{
             borderColor: "coolGray.200",
+          }}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.22,
+            shadowRadius: 2.22,
+
+            elevation: 3,
           }}
         >
           <Image
@@ -280,8 +291,8 @@ const Home = ({ navigation }) => {
               height: 150,
             }}
           />
-          <Box p={2} style={styles.price_container}>
-            <Text fontSize="md" ml={1.5} mb={1}>
+          <Box p={1} style={styles.price_container}>
+            <Text fontSize="md" ml={1.5}>
               {item.name}
             </Text>
 
@@ -289,8 +300,8 @@ const Home = ({ navigation }) => {
               <HStack alignItems="center" px={0}>
                 <MaterialCommunityIcons
                   name="ethereum"
-                  size={20}
-                  color="black"
+                  size={14}
+                  color="grey"
                 />
                 <Text fontSize="sm">{item.price} ETH</Text>
               </HStack>
@@ -336,7 +347,7 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <Box px={6} safeArea w="100%">
+    <Box px={6} my={4} w="100%">
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}

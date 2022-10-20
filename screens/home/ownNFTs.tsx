@@ -7,6 +7,7 @@ import {
   Image,
   Center,
   Skeleton,
+  HStack,
 } from "native-base";
 import { View, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
@@ -19,6 +20,7 @@ import axios from "axios";
 import { marketplaceAddress, marketplaceJSON } from "../../config";
 import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 import NFTNotFound from "../../components/NotFound";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const OwnNFTs = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
@@ -47,6 +49,7 @@ const OwnNFTs = ({ navigation }) => {
           seller: item.seller,
           owner: item.owner,
           image: meta.data.image,
+          name: meta.data.name,
           tokenUri,
         };
         return itemToReturn;
@@ -81,61 +84,109 @@ const OwnNFTs = ({ navigation }) => {
 
   if (isLoading)
     return (
-      <Center w="100%">
-        <VStack
-          w="80%"
-          maxW="400"
-          borderWidth="1"
-          space={8}
-          overflow="hidden"
-          rounded="md"
-          _dark={{
-            borderColor: "coolGray.500",
-          }}
-          _light={{
-            borderColor: "coolGray.200",
-          }}
-        >
-          <Skeleton h="40" />
-          <Skeleton.Text px="4" />
-          <Skeleton px="4" my="4" rounded="md" startColor="primary.100" />
+      <Box safeArea w="100%" px={5}>
+        <VStack h="100%" space={6}>
+          {[1, 2, 3, 4, 5].map((item) => {
+            return (
+              <HStack
+                w="100%"
+                maxW="400"
+                borderWidth="1"
+                space={5}
+                overflow="hidden"
+                rounded="md"
+                _dark={{
+                  borderColor: "coolGray.500",
+                }}
+                _light={{
+                  borderColor: "coolGray.200",
+                }}
+                h={150}
+                p={2}
+              >
+                <Skeleton
+                  w="40"
+                  h="100%"
+                  flex="2"
+                  rounded="md"
+                  startColor="coolGray.200"
+                />
+                <VStack space={4} flex="2" py={2}>
+                  <Skeleton
+                    rounded="full"
+                    h="5"
+                    startColor="coolGray.200"
+                    mb={1}
+                  />
+                  <Skeleton
+                    rounded="full"
+                    h="5"
+                    startColor="coolGray.200"
+                    mb={1}
+                  />
+                  <Skeleton h="10" rounded="full" startColor="coolGray.200" />
+                </VStack>
+              </HStack>
+            );
+          })}
         </VStack>
-      </Center>
+      </Box>
     );
 
   if (error) return <Text>An error occured </Text>;
 
   return (
     <Box safeArea px={6}>
-      <VStack space={3} alignItems="center">
-        <View>
-          {data?.map((nft, index) => {
-            return (
-              <Box m={2} key={index} height="200px" width="70%">
-                <Image
-                  source={{
-                    uri: nft.image,
-                  }}
-                  width="100px"
-                  height="100px"
-                  alt="Alternate Text"
-                  size="xl"
-                />
-                <Text>{nft.name}</Text>
-                <Text>{nft.description}</Text>
-                <Text>{nft.price} ETH</Text>
+      <VStack h="100%" space={4}>
+        {data?.map((nft) => {
+          return (
+            <HStack
+              w="100%"
+              maxW="400"
+              space={5}
+              overflow="hidden"
+              rounded="md"
+              h={150}
+              p={2}
+              borderWidth="1"
+              _dark={{
+                borderColor: "coolGray.500",
+              }}
+              _light={{
+                borderColor: "coolGray.200",
+              }}
+            >
+              <Image
+                source={{
+                  uri: nft.image,
+                }}
+                width="50%"
+                height="100%"
+                alt="Alternate Text"
+                borderRadius={10}
+              />
+              <VStack space={3} flex="2" py={2}>
+                <Text fontSize="lg">{nft.name}</Text>
+                <HStack alignItems="center" ml={-1} mb={2}>
+                  <MaterialCommunityIcons
+                    name="ethereum"
+                    size={24}
+                    color="grey"
+                  />
+                  <Text fontSize="md">{nft.price} ETH</Text>
+                </HStack>
                 <Button
+                  borderRadius={50}
                   onPress={() => {
                     resellNFT(nft);
                   }}
-                  borderRadius={50}
                 >
                   Resell
                 </Button>
-              </Box>
-            );
-          })}
-        </View>
+              </VStack>
+            </HStack>
+          );
+        })}
       </VStack>
     </Box>
   );
