@@ -8,8 +8,8 @@ import {
   useDisclose,
   Heading,
   ScrollView,
+  useToast,
 } from "native-base";
-// import { Image } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStore } from "../../../store";
@@ -18,13 +18,13 @@ import { ethers } from "ethers";
 import ConnectWalletActionSheet from "../../../components/ActionSheet";
 import { getETHPriceInUSD } from "../../../utils/walletUtils";
 import { useState, useEffect } from "react";
-import ReadMore from "@fawazahmed/react-native-read-more";
 import TextLessMoreView from "../../../components/TextMoreOrLess";
 
 const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -35,26 +35,40 @@ const ViewNFT = ({ route, navigation }) => {
     fetchBalance();
   }, []);
 
-  // const priceInUSD = (async () => await getETHPriceInUSD(nft.price))();
-
   const { isOpen, onOpen, onClose } = useDisclose();
 
   const buyNFT = async (nft) => {
     if (connector?.connected) {
-      const contract = new ethers.Contract(
-        marketplaceAddress,
-        marketplaceJSON.abi,
-        signer
-      );
-      const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-      const transaction = await contract.createMarketSale(nft.tokenId, {
-        value: price,
-      });
-      await transaction.wait();
+      try {
+        const contract = new ethers.Contract(
+          marketplaceAddress,
+          marketplaceJSON.abi,
+          signer
+        );
+        const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+        const transaction = await contract.createMarketSale(nft.tokenId, {
+          value: price,
+        });
+        console.log({ transaction });
+        await transaction.wait();
 
-      navigation.navigate("Dashboard", {
-        screen: "Own",
-      });
+        navigation.navigate("Dashboard", {
+          screen: "Own",
+        });
+      } catch (err) {
+        console.log(err);
+        toast.show({
+          id: "copied",
+          duration: 1500,
+          render: () => {
+            return (
+              <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+                <Text color="white">Insufficent funds in wallet</Text>
+              </Box>
+            );
+          },
+        });
+      }
     } else {
       onOpen();
     }
@@ -87,15 +101,10 @@ const ViewNFT = ({ route, navigation }) => {
             justifyContent="space-between"
           >
             <Heading size="lg">{nft.name}</Heading>
-            {/* <Text fontSize="md">
-              {nft.description} Setting a timer for a long period of time, i.e.
-              multiple minutes, is a performance and correctness issue on
-              Android as it keeps the timer module awake, and timers can only be
-              called when the app is in the foreground.
-            </Text> */}
+
             <TextLessMoreView
               targetLines={2}
-              text={`${nft.description} Setting a timer for a long period of time, i.e. multiple minutes, is a performance and correctness issue on Android as it keeps the timer module awake, and timers can only be called when the app is in the foreground.`}
+              text={nft.description}
             ></TextLessMoreView>
 
             <VStack
@@ -107,7 +116,6 @@ const ViewNFT = ({ route, navigation }) => {
               }}
             >
               <Text fontSize="xs">Current price</Text>
-              {/* <HStack justifyContent="space-between"> */}
               <HStack alignItems="center" ml={-1.5}>
                 <MaterialCommunityIcons
                   name="ethereum"
@@ -117,7 +125,6 @@ const ViewNFT = ({ route, navigation }) => {
                 <Heading size="lg">{nft.price}</Heading>
               </HStack>
               <Text fontSize="sm">$ {priceInUSD?.toFixed(2)}</Text>
-              {/* </HStack> */}
             </VStack>
           </VStack>
           <Button

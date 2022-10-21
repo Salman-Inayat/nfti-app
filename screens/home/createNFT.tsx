@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   VStack,
   FormControl,
   Input,
   Button,
   useToast,
-  Center,
-  Container,
+  TextArea,
   Text,
   Box,
+  Image,
+  Skeleton,
 } from "native-base";
 
-import { View, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-
+import { ScrollView, StyleSheet } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -21,15 +21,16 @@ import { useStore } from "../../store";
 import { uploadToIPFS } from "../../utils/ipfsClient";
 import { ethers } from "ethers";
 import { marketplaceAddress, marketplaceJSON } from "../../config";
-import Toaster from "../../components/Toaster";
 import ConnectWalletAlert from "../../components/ConnectWalletAlert";
+import Spinner from "react-native-loading-spinner-overlay";
+import { useFocusEffect } from "@react-navigation/native";
+import { primaryColor } from "../../theme/colors";
 
-// import { create as ipfsHttpClient } from "ipfs-http-client";
-
-const CreateNFT = () => {
-  const [imageURL, setImageURL] = useState();
+const CreateNFT = ({ navigation }) => {
+  const [imageURL, setImageURL] = useState("");
   const { connector, provider, signer } = useStore();
-  const toast = useToast();
+  const [isCreating, setIsCreating] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const CreateNFTSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -37,10 +38,20 @@ const CreateNFT = () => {
     price: Yup.string().required("Price is required"),
   });
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setImageURL("");
+      clearErrors();
+      reset();
+    }, [])
+  );
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
+    clearErrors,
     control,
   } = useForm({
     resolver: yupResolver(CreateNFTSchema),
@@ -59,11 +70,15 @@ const CreateNFT = () => {
     }
 
     const base64 = result.base64;
+    setIsImageUploading(true);
     const imageURL = await uploadToIPFS(base64);
+    console.log(imageURL);
     setImageURL(imageURL);
+    setIsImageUploading(false);
   };
 
   async function listNFTForSale(formData) {
+    setIsCreating(true);
     const { name, description, price } = formData;
 
     const data = {
@@ -86,10 +101,12 @@ const CreateNFT = () => {
       value: listingPrice,
     });
     await transaction.wait();
+    setIsCreating(false);
 
-    toast.show({
-      render: () => {
-        return <Toaster statement="NFT created successfully" />;
+    navigation.navigate("Dashboard", {
+      screen: "NFTs",
+      params: {
+        screen: "Home",
       },
     });
   }
@@ -101,81 +118,111 @@ const CreateNFT = () => {
   }
 
   return (
-    <Box px={6}>
-      <VStack space={2} justifyContent="space-between" h="100%" py={5}>
-        <VStack space={4} my={4}>
-          <FormControl isInvalid={"name" in errors}>
-            <FormControl.Label>Name</FormControl.Label>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  onBlur={onBlur}
-                  placeholder="Name"
-                  onChangeText={onChange}
-                  value={value}
+    <ScrollView
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <Box px={6}>
+        <VStack space={2} justifyContent="space-between" h="100%" py={5}>
+          <VStack space={4} my={4}>
+            <FormControl isInvalid={"name" in errors}>
+              <FormControl.Label>Name</FormControl.Label>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    placeholder="Name"
+                    onChangeText={onChange}
+                    value={value}
+                  />
+                )}
+                name="name"
+                defaultValue=""
+              />
+              <FormControl.ErrorMessage>
+                {errors.name?.message}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={"description" in errors}>
+              <FormControl.Label>Description</FormControl.Label>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextArea
+                    onBlur={onBlur}
+                    placeholder="Description"
+                    onChangeText={onChange}
+                    value={value}
+                    h={40}
+                  />
+                )}
+                name="description"
+                defaultValue=""
+              />
+              <FormControl.ErrorMessage>
+                {errors.description?.message}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={"price" in errors}>
+              <FormControl.Label>Price</FormControl.Label>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    placeholder="Price"
+                    onChangeText={onChange}
+                    value={value}
+                    keyboardType="numeric"
+                  />
+                )}
+                name="price"
+                defaultValue=""
+              />
+              <FormControl.ErrorMessage>
+                {errors.price?.message}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <Button onPress={pickImage} borderRadius={50}>
+              Pick Image
+            </Button>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              {imageURL !== "" && !isImageUploading ? (
+                <Image
+                  source={{ uri: imageURL }}
+                  style={{ width: 200, height: 200 }}
+                  borderRadius={10}
+                  alt="nft-image"
                 />
+              ) : (
+                isImageUploading && (
+                  <Skeleton borderRadius={10} height={200} width={200} />
+                )
               )}
-              name="name"
-              defaultValue=""
-            />
-            <FormControl.ErrorMessage>
-              {errors.name?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={"description" in errors}>
-            <FormControl.Label>Description</FormControl.Label>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  onBlur={onBlur}
-                  placeholder="Description"
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-              name="description"
-              defaultValue=""
-            />
-            <FormControl.ErrorMessage>
-              {errors.description?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={"price" in errors}>
-            <FormControl.Label>Price</FormControl.Label>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  onBlur={onBlur}
-                  placeholder="Price"
-                  onChangeText={onChange}
-                  value={value}
-                  keyboardType="numeric"
-                />
-              )}
-              name="price"
-              defaultValue=""
-            />
-            <FormControl.ErrorMessage>
-              {errors.name?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <Button onPress={pickImage} borderRadius={50}>
-            Pick Image
-          </Button>
-          {/* {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        )} */}
-        </VStack>
+            </Box>
+          </VStack>
 
-        <Button onPress={handleSubmit(listNFTForSale)} borderRadius={50}>
-          List NFT
-        </Button>
-      </VStack>
-    </Box>
+          <Button onPress={handleSubmit(listNFTForSale)} borderRadius={50}>
+            List NFT
+          </Button>
+        </VStack>
+      </Box>
+      <Spinner
+        visible={isCreating}
+        textContent="Uploading NFT to marketplace"
+        textStyle={styles.spinnerTextStyle}
+        color={primaryColor}
+        animation="fade"
+      />
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  spinnerTextStyle: {
+    color: "#FFF",
+  },
+});
 
 export default CreateNFT;

@@ -33,7 +33,7 @@ const WalletNotConnected = ({ onOpen }) => {
 };
 
 const BalanceContainer = () => {
-  const { connector, provider } = useStore();
+  const { connector, provider, signer } = useStore();
   const { isOpen, onOpen, onClose } = useDisclose();
 
   const [walletBalance, setWalletBalance] = useState("");

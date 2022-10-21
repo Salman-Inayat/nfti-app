@@ -22,10 +22,17 @@ import ProfileWalletNotConnected from "../../components/ProfileWalletNotConnecte
 import { shortenAddress } from "../../utils/walletUtils";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SvgUri } from "react-native-svg";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Profile = ({ navigation }) => {
-  const { connector, provider } = useStore();
+  const { connector } = useStore();
   const toast = useToast();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(connector?._peerMeta);
+    }, [])
+  );
 
   const copyToClipboard = async (text: string) => {
     // await Clipboard?.setStringAsync(text);
@@ -43,51 +50,39 @@ const Profile = ({ navigation }) => {
     }
   };
 
-  const loadNFTs = async () => {
-    const provider = ethers.providers.getDefaultProvider(contractNetwork);
-    const contract = new ethers.Contract(
-      marketplaceAddress,
-      marketplaceJSON.abi,
-      provider
-    );
+  // get transactions from the blockchain and display them
+  const getTransactions = async () => {
+    // let etherscanProvider = new ethers.providers.EtherscanProvider();
 
-    const data = await contract.fetchMarketItems();
+    // const history = await etherscanProvider.getHistory(connector?.accounts[0]);
+    // console.log(history);
+    let data = JSON.stringify({
+      jsonrpc: "2.0",
+      id: 0,
+      method: "alchemy_getAssetTransfers",
+      params: [
+        {
+          fromBlock: "0x0",
+          fromAddress: connector.accounts[0],
+          category: ["external", "internal", "erc20", "erc721", "erc1155"],
+        },
+      ],
+    });
 
-    const items = await Promise.all(
-      data.map(
-        async (item: {
-          tokenId: { toNumber: () => any };
-          price: { toString: () => ethers.BigNumberish };
-          seller: any;
-          owner: any;
-        }) => {
-          const tokenUri = await contract.tokenURI(item.tokenId);
-          const meta = await axios.get(tokenUri);
-          const price = ethers.utils.formatUnits(
-            item.price.toString(),
-            "ether"
-          );
-          let itemToReturn = {
-            price,
-            tokenId: item.tokenId.toNumber(),
-            seller: item.seller,
-            owner: item.owner,
-            image: meta.data.image,
-            name: meta.data.name,
-            description: meta.data.description,
-          };
-          return itemToReturn;
-        }
-      )
-    );
+    var requestOptions = {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      data: data,
+    };
 
-    console.log(items);
-    return items;
+    const apiKey = "hBLwhx2rYMaPbySIvWmIxV0sicTQqVSz";
+    const baseURL = `https://eth-mainnet.alchemyapi.io/v2/${apiKey}`;
+    const axiosURL = `${baseURL}`;
+
+    axios(axiosURL, requestOptions)
+      .then((response) => console.log(JSON.stringify(response.data, null, 2)))
+      .catch((error) => console.log(error));
   };
-
-  useEffect(() => {
-    loadNFTs();
-  }, []);
 
   if (!connector?.connected) {
     return <ProfileWalletNotConnected />;
@@ -128,26 +123,11 @@ const Profile = ({ navigation }) => {
           <HStack space={2} alignItems="center">
             <Text>Wallet</Text>
             <Text>{connector._peerMeta.name}</Text>
-            {/* <Image
-              size={100}
-              // borderRadius={100}
-              source={{
-                uri: connector._peerMeta.icons[0],
-              }}
-              alt="wallet image"
-            /> */}
-
-            {/* <SvgUri
-              width="100%"
-              height="100%"
-              source={{ uri: connector._peerMeta.icons[0] }}
-              // uri="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg"
-            /> */}
           </HStack>
 
-          {/* <Button onPress={removeWallet} borderRadius={50}>
-            Remove wallet
-          </Button> */}
+          <Button onPress={getTransactions} borderRadius={50}>
+            get history
+          </Button>
         </VStack>
       </VStack>
     </Box>
