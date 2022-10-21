@@ -19,11 +19,13 @@ import ConnectWalletActionSheet from "../../../components/ActionSheet";
 import { getETHPriceInUSD } from "../../../utils/walletUtils";
 import { useState, useEffect } from "react";
 import TextLessMoreView from "../../../components/TextMoreOrLess";
+import Loader from "../../../components/Loader";
 
 const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
+  const [isProcessing, setIsProcessing] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -40,6 +42,7 @@ const ViewNFT = ({ route, navigation }) => {
   const buyNFT = async (nft) => {
     if (connector?.connected) {
       try {
+        setIsProcessing(true);
         const contract = new ethers.Contract(
           marketplaceAddress,
           marketplaceJSON.abi,
@@ -52,6 +55,7 @@ const ViewNFT = ({ route, navigation }) => {
         console.log({ transaction });
         await transaction.wait();
 
+        setIsProcessing(false);
         navigation.navigate("Dashboard", {
           screen: "Own",
         });
@@ -144,6 +148,7 @@ const ViewNFT = ({ route, navigation }) => {
           onClose={onClose}
         />
       </Box>
+      <Loader loading={isProcessing} text="Processing..." />
     </ScrollView>
   );
 };

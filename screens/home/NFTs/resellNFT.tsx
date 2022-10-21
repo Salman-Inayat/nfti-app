@@ -19,20 +19,22 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ethers } from "ethers";
 import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { useStore } from "../../../store";
+import Loader from "../../../components/Loader";
 
 const ResellNFT = ({ route, navigation }) => {
   const { nft } = route.params;
   const [price, setPrice] = useState("");
   const { connector, privider, signer } = useStore();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePriceChange = (text) => {
-    console.log(typeof text);
     setPrice(text);
   };
 
   async function listNFTForSale() {
     if (price === "") return;
 
+    setIsProcessing(true);
     const priceFormatted = ethers.utils.parseUnits(price, "ether");
     let contract = new ethers.Contract(
       marketplaceAddress,
@@ -46,6 +48,7 @@ const ResellNFT = ({ route, navigation }) => {
       value: listingPrice,
     });
     await transaction.wait();
+    setIsProcessing(false);
     navigation.navigate("Dashboard", {
       screen: "NFTs",
       params: {
@@ -85,6 +88,7 @@ const ResellNFT = ({ route, navigation }) => {
           </Button>
         </VStack>
       </VStack>
+      <Loader loading={isProcessing} text="Processing..." />
     </Box>
   );
 };

@@ -151,60 +151,65 @@ const OwnNFTs = ({ navigation }) => {
   // if (error) return <Text>An error occured </Text>;
 
   return (
-    <Box safeArea px={6}>
-      <VStack h="100%" space={4}>
-        {nfts?.map((nft, index) => {
-          return (
-            <HStack
-              w="100%"
-              maxW="400"
-              space={5}
-              overflow="hidden"
-              rounded="md"
-              h={150}
-              p={2}
-              borderWidth="1"
-              _dark={{
-                borderColor: "coolGray.500",
-              }}
-              _light={{
-                borderColor: "coolGray.200",
-              }}
-              key={index}
-            >
-              <Image
-                source={{
-                  uri: nft.image,
+    <ScrollView
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <Box safeArea px={6}>
+        <VStack h="100%" space={4}>
+          {nfts?.map((nft, index) => {
+            return (
+              <HStack
+                w="100%"
+                maxW="400"
+                space={5}
+                overflow="hidden"
+                rounded="md"
+                h={150}
+                p={2}
+                borderWidth="1"
+                _dark={{
+                  borderColor: "coolGray.500",
                 }}
-                width="50%"
-                height="100%"
-                alt="Alternate Text"
-                borderRadius={10}
-              />
-              <VStack space={3} flex="2" py={2}>
-                <Text fontSize="lg">{nft.name}</Text>
-                <HStack alignItems="center" ml={-1} mb={2}>
-                  <MaterialCommunityIcons
-                    name="ethereum"
-                    size={24}
-                    color="grey"
-                  />
-                  <Text fontSize="md">{nft.price} ETH</Text>
-                </HStack>
-                <Button
-                  borderRadius={50}
-                  onPress={() => {
-                    resellNFT(nft);
+                _light={{
+                  borderColor: "coolGray.200",
+                }}
+                key={index}
+              >
+                <Image
+                  source={{
+                    uri: nft.image,
                   }}
-                >
-                  Resell
-                </Button>
-              </VStack>
-            </HStack>
-          );
-        })}
-      </VStack>
-    </Box>
+                  width="50%"
+                  height="100%"
+                  alt="Alternate Text"
+                  borderRadius={10}
+                />
+                <VStack space={3} flex="2" py={2}>
+                  <Text fontSize="lg">{nft.name}</Text>
+                  <HStack alignItems="center" ml={-1} mb={2}>
+                    <MaterialCommunityIcons
+                      name="ethereum"
+                      size={24}
+                      color="grey"
+                    />
+                    <Text fontSize="md">{nft.price} ETH</Text>
+                  </HStack>
+                  <Button
+                    borderRadius={50}
+                    onPress={() => {
+                      resellNFT(nft);
+                    }}
+                  >
+                    Resell
+                  </Button>
+                </VStack>
+              </HStack>
+            );
+          })}
+        </VStack>
+      </Box>
+    </ScrollView>
   );
 };
 

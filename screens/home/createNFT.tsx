@@ -25,6 +25,7 @@ import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useFocusEffect } from "@react-navigation/native";
 import { primaryColor } from "../../theme/colors";
+import Loader from "../../components/Loader";
 
 const CreateNFT = ({ navigation }) => {
   const [imageURL, setImageURL] = useState("");
@@ -208,13 +209,8 @@ const CreateNFT = ({ navigation }) => {
           </Button>
         </VStack>
       </Box>
-      <Spinner
-        visible={isCreating}
-        textContent="Uploading NFT to marketplace"
-        textStyle={styles.spinnerTextStyle}
-        color={primaryColor}
-        animation="fade"
-      />
+
+      <Loader loading={isCreating} text="Uploading NFT to marketplace" />
     </ScrollView>
   );
 };
