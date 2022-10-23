@@ -90,8 +90,8 @@ const withPackageVisibility: ConfigPlugin = (config) => {
 };
 
 const config: ExpoConfig = {
-  name: "test-dapp",
-  slug: "test-dapp",
+  name: "nfti",
+  slug: "nfti",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -108,10 +108,10 @@ const config: ExpoConfig = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.clxyder.testdapp",
+    bundleIdentifier: "com.clxyder.nfti",
   },
   android: {
-    package: "com.clxyder.testdapp",
+    package: "com.clxyder.nfti",
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
