@@ -23,12 +23,14 @@ import Loader from "../../../components/Loader";
 
 const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
+
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
   const [isProcessing, setIsProcessing] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
+    console.log(nft);
     const fetchBalance = async () => {
       const balance = await getETHPriceInUSD(nft.price);
       setPriceInUSD(balance);
@@ -60,6 +62,7 @@ const ViewNFT = ({ route, navigation }) => {
           screen: "Own",
         });
       } catch (err) {
+        setIsProcessing(false);
         console.log(err);
         toast.show({
           id: "copied",

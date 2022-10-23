@@ -129,32 +129,49 @@ const Home = ({ navigation }) => {
 
   if (isLoading && !nfts?.length)
     return (
-      <Box w="100%" mt={5} px={5} py={3}>
-        <VStack space={6} w="100%">
-          {[1, 2, 3].map((data, index) => {
-            return (
-              <VStack
-                w="100%"
-                maxW="600"
-                borderWidth="1"
-                space={8}
-                overflow="hidden"
-                rounded="xl"
-                _dark={{
-                  borderColor: "coolGray.700",
-                }}
-                _light={{
-                  borderColor: "coolGray.200",
-                }}
-                key={index}
-              >
-                <Skeleton h="40" />
-                <Skeleton.Text px="4" mb={5} />
-              </VStack>
-            );
-          })}
+      <VStack space={2} h="100%" px={6} my={4} w="100%">
+        <Skeleton h="150" borderRadius={10} />
+        <VStack space={6} h="100%">
+          <FlatList
+            data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            renderItem={({ index }) => {
+              return (
+                <VStack
+                  h="200"
+                  w="50%"
+                  borderWidth="1"
+                  space={1}
+                  overflow="hidden"
+                  // rounded="xl"
+                  borderRadius={10}
+                  _dark={{
+                    borderColor: "coolGray.700",
+                  }}
+                  _light={{
+                    borderColor: "coolGray.200",
+                  }}
+                  p={2}
+                  style={{
+                    marginRight: index % 2 !== 0 ? 0 : 10,
+                  }}
+                >
+                  <Skeleton h="70%" w="100%" borderRadius="md" />
+                  <Skeleton h="12%" w="100%" borderRadius="md" />
+                  <Skeleton h="12%" w="100%" borderRadius="md" />
+                </VStack>
+              );
+            }}
+            numColumns={2}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            style={{
+              flex: 1,
+              marginVertical: 10,
+            }}
+            ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+          />
         </VStack>
-      </Box>
+      </VStack>
     );
 
   // if (error) return <Text>An error occured </Text>;
@@ -326,37 +343,9 @@ const Home = ({ navigation }) => {
                 onPress={async () => await manageFavorites(item)}
               /> */}
             </HStack>
-            {/* <Button onPress={async () => await emptyStorage()}>get</Button> */}
           </Box>
         </VStack>
       </Pressable>
-    );
-  };
-
-  const BalanceBox = () => {
-    return (
-      <HStack space={120}>
-        <Box>
-          <Text color="white" fontSize="sm">
-            {" "}
-            Current balance
-          </Text>
-          <Heading color="white" size="xl" style={styles.balance_text} mt={2}>
-            {walletBalance} ETH
-          </Heading>
-        </Box>
-        <MaterialCommunityIcons name="ethereum" size={70} color="white" />
-      </HStack>
-    );
-  };
-
-  const WalletNotConnected = () => {
-    return (
-      <Box>
-        <Text color="white" fontSize="md" onPress={onOpen}>
-          Connect your wallet to view balance
-        </Text>
-      </Box>
     );
   };
 

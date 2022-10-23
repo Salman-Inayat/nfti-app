@@ -129,6 +129,11 @@ const config: ExpoConfig = {
       },
     ],
   ],
+  extra: {
+    eas: {
+      projectId: "dbeee433-ba33-4cba-8010-62f157862995",
+    },
+  },
 };
 
 export default withPackageVisibility(config);

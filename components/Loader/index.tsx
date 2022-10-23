@@ -11,6 +11,7 @@ function Loader({ loading, text }: { loading: boolean; text: string }) {
       textStyle={styles.spinnerTextStyle}
       color={primaryColor}
       animation="fade"
+      overlayColor="rgba(0, 0, 0, 0.5)"
     />
   );
 }

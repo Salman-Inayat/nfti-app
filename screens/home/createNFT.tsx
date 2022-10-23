@@ -79,7 +79,7 @@ const CreateNFT = ({ navigation }) => {
   };
 
   async function listNFTForSale(formData) {
-    setIsCreating(true);
+    // setIsCreating(true)
     const { name, description, price } = formData;
 
     const data = {
@@ -101,6 +101,7 @@ const CreateNFT = ({ navigation }) => {
     let transaction = await contract.createToken(contentURL, priceInETH, {
       value: listingPrice,
     });
+    setIsCreating(true);
     await transaction.wait();
     setIsCreating(false);
 

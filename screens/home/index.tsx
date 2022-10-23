@@ -20,8 +20,8 @@ const HomeScreen = ({ navigation }) => {
 
   const Tab = createBottomTabNavigator();
 
-  const handleLogout = () => {
-    connector.killSession();
+  const handleLogout = async () => {
+    await connector.killSession();
     logout();
   };
 
