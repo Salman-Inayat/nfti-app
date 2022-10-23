@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { HStack, Box, Heading, Text, useDisclose } from "native-base";
+import { HStack, Box, Heading, Text, useDisclose, Button } from "native-base";
 import { ImageBackground, StyleSheet } from "react-native";
 import { useStore } from "../../store";
 import { useState } from "react";
@@ -25,16 +25,15 @@ const BalanceBox = ({ walletBalance }: { walletBalance: string }) => {
 const WalletNotConnected = ({ onOpen }) => {
   return (
     <Box>
-      <Text color="white" fontSize="md" onPress={onOpen}>
-        Connect your wallet to view balance
-      </Text>
+      <Button onPress={onOpen} rounded="md">
+        Connect wallet
+      </Button>
     </Box>
   );
 };
 
-const BalanceContainer = () => {
+const BalanceContainer = ({ onOpen }) => {
   const { connector, provider, signer } = useStore();
-  const { isOpen, onOpen, onClose } = useDisclose();
 
   const [walletBalance, setWalletBalance] = useState("");
 

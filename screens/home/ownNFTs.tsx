@@ -31,6 +31,7 @@ const OwnNFTs = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      setNfts([]);
       loadNFTs();
     }, [])
   );

@@ -35,10 +35,10 @@ function ProfileWalletNotConnected() {
           />
 
           <Text fontSize="md" textAlign="center">
-            Conenct to any WalletConnect supported wallet to buy and sell NFTs
+            Connect to any WalletConnect supported wallet to buy and sell NFTs
             on NFTI
           </Text>
-          <Button onPress={() => connectWallet()} w="100%" borderRadius={50}>
+          <Button onPress={connectWallet} w="100%" borderRadius={50}>
             Connect Wallet
           </Button>
         </VStack>

@@ -82,6 +82,10 @@ export const useStore = create((set) => ({
     // navigation.navigate("Auth");
     set({
       isLoggedIn: false,
+      provider: null,
+      signer: null,
+
+      walletData: null,
     });
   },
   attachWallet: async (data: any, navigation) => {
@@ -128,6 +132,7 @@ export const useStore = create((set) => ({
   // },
   setUserWalletConnection: async (data) => {
     const { connector, provider, signer } = data;
+    console.log("Data in the store : ", data.provider);
     set({
       connector,
       provider,

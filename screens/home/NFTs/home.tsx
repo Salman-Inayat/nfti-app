@@ -22,8 +22,6 @@ import {
 import React, { useState, useEffect } from "react";
 import { useStore } from "../../../store";
 import { ethers } from "ethers";
-import { useQuery } from "@tanstack/react-query";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import axios from "axios";
 import {
@@ -41,7 +39,7 @@ const Home = ({ navigation }) => {
   const [walletBalance, setWalletBalance] = useState("");
   const { isOpen, onOpen, onClose } = useDisclose();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [nfts, setNfts] = useState([]);
 
   useFocusEffect(
@@ -80,6 +78,9 @@ const Home = ({ navigation }) => {
 
   const loadNFTs = async () => {
     const provider = ethers.providers.getDefaultProvider(contractNetwork);
+    // const provider = new ethers.providers.JsonRpcProvider(
+    //   "https://eth-goerli.g.alchemy.com"
+    // );
 
     const contract = new ethers.Contract(
       marketplaceAddress,
@@ -97,7 +98,6 @@ const Home = ({ navigation }) => {
           seller: any;
           owner: any;
         }) => {
-          console.log({ item });
           const tokenUri = await contract.tokenURI(item.tokenId);
           const meta = await axios.get(tokenUri);
           const price = ethers.utils.formatUnits(
@@ -119,13 +119,15 @@ const Home = ({ navigation }) => {
     );
 
     setIsLoading(false);
+    console.log({ items });
     setNfts(items);
     // return items;
   };
 
   // const { isLoading, error, data } = useQuery(["marketplace-nfts"], loadNFTs);
 
-  if (!isLoading && !nfts?.length) return <Text>No items in marketplace</Text>;
+  // if (!isLoading && nfts?.length == 0)
+  //   return <Text>No items in marketplace</Text>;
 
   if (isLoading && !nfts?.length)
     return (
@@ -355,7 +357,7 @@ const Home = ({ navigation }) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <BalanceContainer />
+        <BalanceContainer onOpen={onOpen} />
 
         <FlatList
           data={nfts}

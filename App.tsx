@@ -5,6 +5,7 @@ import { useStore } from "./store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import AppScreen from "./screens";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const queryClient = new QueryClient();
 LogBox.ignoreLogs(["Warning: ..."]);
@@ -14,9 +15,11 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient} contextSharing={true}>
-      <NativeBaseProvider>
-        <AppScreen />
-      </NativeBaseProvider>
+      <SafeAreaProvider>
+        <NativeBaseProvider>
+          <AppScreen />
+        </NativeBaseProvider>
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 };

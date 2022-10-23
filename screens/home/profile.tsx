@@ -20,7 +20,7 @@ import { getETHPriceInUSD, shortenAddress } from "../../utils/walletUtils";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { primaryColor } from "../../theme/colors";
 import { ethers } from "ethers";
 import { ActivityIndicator } from "react-native";
@@ -38,11 +38,16 @@ const Profile = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      getTransactions();
+      setTransactions([]);
+      setWalletBalance({
+        inETH: null,
+        inUSD: null,
+      });
       if (connector?.connected) {
+        getTransactions();
         (async () => await getWalletBalance(connector?.accounts[0]))();
       }
-    }, [])
+    }, [connector?.connected])
   );
 
   const copyToClipboard = (text: string) => {
@@ -83,7 +88,7 @@ const Profile = ({ navigation }) => {
     };
 
     const apiKey = "hBLwhx2rYMaPbySIvWmIxV0sicTQqVSz";
-    const baseURL = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`;
+    const baseURL = `https://eth-goerli.g.alchemy.com/v2/${apiKey}`;
     const axiosURL = `${baseURL}`;
 
     const response = await axios(axiosURL, requestOptions);
@@ -172,57 +177,70 @@ const Profile = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
           >
-            {transactions.length > 0 ? (
-              transactions?.map((transaction) => {
-                return (
-                  <HStack
-                    borderWidth="1"
-                    p={3}
-                    w="100%"
-                    borderRadius={10}
-                    my={2}
-                    borderColor="gray.300"
-                    justifyContent="space-between"
-                  >
-                    <Box w="10%" display="flex" justifyContent="center">
-                      <MaterialCommunityIcons
-                        name="call-received"
-                        size={24}
-                        color={primaryColor}
-                      />
-                    </Box>
+            {transactions.length > 0
+              ? transactions?.map((transaction) => {
+                  return (
+                    <HStack
+                      borderWidth="1"
+                      p={3}
+                      w="100%"
+                      borderRadius={10}
+                      my={2}
+                      borderColor="gray.300"
+                      justifyContent="space-between"
+                    >
+                      <Box w="10%" display="flex" justifyContent="center">
+                        {checkTransactionType(transaction) === "Sender" ? (
+                          <MaterialCommunityIcons
+                            name="arrow-top-right"
+                            size={24}
+                            color={primaryColor}
+                          />
+                        ) : (
+                          <MaterialCommunityIcons
+                            name="arrow-bottom-right"
+                            size={24}
+                            color={primaryColor}
+                          />
+                        )}
 
-                    <HStack space={2} justifyContent="space-between" w="90%">
-                      <VStack>
-                        <Text fontSize="lg">
-                          {checkTransactionType(transaction) === "Sender"
-                            ? "Sent"
-                            : "Received"}
-                        </Text>
-                        <Text fontSize="xs">
-                          {checkTransactionType(transaction) === "Sender"
-                            ? "To: " + shortenAddress(transaction.to)
-                            : "From: " + shortenAddress(transaction.from)}
-                          {/* {shortenAddress(
+                        {/* <MaterialCommunityIcons
+                          name="call-received"
+                          size={24}
+                          color={primaryColor}
+                        /> */}
+                      </Box>
+
+                      <HStack space={2} justifyContent="space-between" w="90%">
+                        <VStack>
+                          <Text fontSize="lg">
+                            {checkTransactionType(transaction) === "Sender"
+                              ? "Sent"
+                              : "Received"}
+                          </Text>
+                          <Text fontSize="xs">
+                            {checkTransactionType(transaction) === "Sender"
+                              ? "To: " + shortenAddress(transaction.to)
+                              : "From: " + shortenAddress(transaction.from)}
+                            {/* {shortenAddress(
                           checkTransactionType(transaction) === "Sender"
                             ? transaction.to
                             : transaction.from
                         )} */}
-                        </Text>
-                      </VStack>
-                      <VStack>
-                        <Text>
-                          {transaction.value}
-                          {transaction.asset}
-                        </Text>
-                      </VStack>
+                          </Text>
+                        </VStack>
+                        <VStack>
+                          <Text>
+                            {transaction.value}
+                            {transaction.asset}
+                          </Text>
+                        </VStack>
+                      </HStack>
                     </HStack>
-                  </HStack>
-                );
-              })
-            ) : (
-              <Text>No transactions yet</Text>
-            )}
+                  );
+                })
+              : !isLoading &&
+                transactions.length == 0 && <Text>No transactions yet</Text>}
             {isLoading && (
               <Box display="flex" justifyContent="center" alignItems="center">
                 <ActivityIndicator size="large" color={primaryColor} />

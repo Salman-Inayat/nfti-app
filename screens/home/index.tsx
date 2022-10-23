@@ -13,6 +13,7 @@ import { primaryColor } from "../../theme/colors";
 import { Icon, IconButton, useDisclose } from "native-base";
 import LogoutActionSheet from "../../components/LogoutActionSheet";
 import { Alert } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = ({ navigation }) => {
   const { logout, connector } = useStore();

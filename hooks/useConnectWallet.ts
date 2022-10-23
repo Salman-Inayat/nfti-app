@@ -9,11 +9,13 @@ export default function useConnectWallet() {
   const { setUserWalletConnection } = useStore();
 
   const connectWallet = async () => {
-    await connector.connect();
+    console.log("wallet is connected inside walletConnect()");
+    await connector?.connect();
   };
 
   useEffect(() => {
-    if (connector.connected) {
+    if (connector?.connected) {
+      console.log("Wallet is conected, this cide is from useEffect");
       const walletProvider = new WalletConnectProvider({
         chainId: 5,
         infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
@@ -35,6 +37,8 @@ export default function useConnectWallet() {
           provider,
           signer,
         };
+
+        console.log("setting store content");
 
         setUserWalletConnection(data);
       }).catch((err) => console.log(err));

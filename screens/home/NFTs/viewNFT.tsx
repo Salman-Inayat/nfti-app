@@ -30,7 +30,6 @@ const ViewNFT = ({ route, navigation }) => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log(nft);
     const fetchBalance = async () => {
       const balance = await getETHPriceInUSD(nft.price);
       setPriceInUSD(balance);
@@ -63,7 +62,6 @@ const ViewNFT = ({ route, navigation }) => {
         });
       } catch (err) {
         setIsProcessing(false);
-        console.log(err);
         toast.show({
           id: "copied",
           duration: 1500,
