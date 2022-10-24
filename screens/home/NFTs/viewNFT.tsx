@@ -16,13 +16,14 @@ import { useStore } from "../../../store";
 import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { ethers } from "ethers";
 import ConnectWalletActionSheet from "../../../components/ActionSheet";
-import { getETHPriceInUSD } from "../../../utils/walletUtils";
+import { getETHPriceInUSD, shortenAddress } from "../../../utils/walletUtils";
 import { useState, useEffect } from "react";
 import TextLessMoreView from "../../../components/TextMoreOrLess";
 import Loader from "../../../components/Loader";
 
 const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
+  console.log({ nft });
 
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
@@ -42,6 +43,22 @@ const ViewNFT = ({ route, navigation }) => {
 
   const buyNFT = async (nft) => {
     if (connector?.connected) {
+      console.log(connector?.accounts[0]);
+      console.log(nft.seller);
+      if (connector?.accounts[0] === nft.seller) {
+        toast.show({
+          id: "own-nft-error",
+          duration: 1000,
+          render: () => {
+            return (
+              <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+                <Text color="white">You can't buy your own NFT</Text>
+              </Box>
+            );
+          },
+        });
+        return;
+      }
       try {
         setIsProcessing(true);
         const contract = new ethers.Contract(
@@ -54,7 +71,8 @@ const ViewNFT = ({ route, navigation }) => {
           value: price,
         });
         console.log({ transaction });
-        await transaction.wait();
+        const transactionResponse = await transaction.wait();
+        console.log({ transactionResponse });
 
         setIsProcessing(false);
         navigation.navigate("Dashboard", {
@@ -63,7 +81,7 @@ const ViewNFT = ({ route, navigation }) => {
       } catch (err) {
         setIsProcessing(false);
         toast.show({
-          id: "copied",
+          id: "funds-error",
           duration: 1500,
           render: () => {
             return (
@@ -131,6 +149,9 @@ const ViewNFT = ({ route, navigation }) => {
               </HStack>
               <Text fontSize="sm">$ {priceInUSD?.toFixed(2)}</Text>
             </VStack>
+            <HStack space={2} w="100%">
+              <Text>Seller: {shortenAddress(nft.seller)}</Text>
+            </HStack>
           </VStack>
           <Button
             size="lg"

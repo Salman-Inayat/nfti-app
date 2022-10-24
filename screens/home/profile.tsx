@@ -24,6 +24,9 @@ import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { primaryColor } from "../../theme/colors";
 import { ethers } from "ethers";
 import { ActivityIndicator } from "react-native";
+import { marketplaceAddress } from "../../config";
+import moment from "moment";
+import * as WebBrowser from "expo-web-browser";
 
 const Profile = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
@@ -77,6 +80,8 @@ const Profile = ({ navigation }) => {
           fromBlock: "0x0",
           fromAddress: connector?.accounts[0],
           category: ["erc721"],
+          contractAddresses: [marketplaceAddress],
+          withMetadata: true,
         },
       ],
     });
@@ -103,7 +108,7 @@ const Profile = ({ navigation }) => {
   }
 
   const checkTransactionType = (transaction) => {
-    if (transaction.from === connector?.accounts[0]) {
+    if (transaction.from === connector?.accounts[0].toLowerCase()) {
       return "Sender";
     }
     return "Receiver";
@@ -117,6 +122,12 @@ const Profile = ({ navigation }) => {
       inETH: balanceInEth.substring(0, 4),
       inUSD: balanceInUSD.toFixed(2),
     });
+  };
+
+  const viewOnEtherscan = async (txHash) => {
+    await WebBrowser.openBrowserAsync(
+      `https://goerli.etherscan.io/tx/${txHash}`
+    );
   };
 
   return (
@@ -178,7 +189,7 @@ const Profile = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
           >
             {transactions.length > 0
-              ? transactions?.map((transaction) => {
+              ? transactions?.map((transaction, index) => {
                   return (
                     <HStack
                       borderWidth="1"
@@ -188,6 +199,7 @@ const Profile = ({ navigation }) => {
                       my={2}
                       borderColor="gray.300"
                       justifyContent="space-between"
+                      key={index}
                     >
                       <Box w="10%" display="flex" justifyContent="center">
                         {checkTransactionType(transaction) === "Sender" ? (
@@ -198,7 +210,7 @@ const Profile = ({ navigation }) => {
                           />
                         ) : (
                           <MaterialCommunityIcons
-                            name="arrow-bottom-right"
+                            name="arrow-bottom-left"
                             size={24}
                             color={primaryColor}
                           />
@@ -230,10 +242,17 @@ const Profile = ({ navigation }) => {
                           </Text>
                         </VStack>
                         <VStack>
-                          <Text>
-                            {transaction.value}
-                            {transaction.asset}
-                          </Text>
+                          <Button
+                            onPress={() => viewOnEtherscan(transaction.hash)}
+                            bg="transparent"
+                            _text={{ color: primaryColor }}
+                            _pressed={{
+                              bg: "transparent",
+                              _text: { color: "gray.500" },
+                            }}
+                          >
+                            View on Etherscan
+                          </Button>
                         </VStack>
                       </HStack>
                     </HStack>

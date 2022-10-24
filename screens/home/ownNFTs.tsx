@@ -22,16 +22,20 @@ import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 import NFTNotFound from "../../components/NotFound";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { useRefetchOnFocus } from "../../hooks/useRefetchOnFocus";
 
 const OwnNFTs = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const [nfts, setNfts] = useState([]);
 
+  // useEffect(() => {
+  //   console.log("useEffect");
+  //   setIsLoading(true);
+  //   setNfts([]);
+  // }, []);
+
   useFocusEffect(
     React.useCallback(() => {
-      setNfts([]);
       loadNFTs();
     }, [])
   );
@@ -68,7 +72,6 @@ const OwnNFTs = ({ navigation }) => {
       })
     );
 
-    console.log(items);
     setNfts(items);
     setIsLoading(false);
     // return items;
@@ -96,13 +99,14 @@ const OwnNFTs = ({ navigation }) => {
     );
   }
 
-  if (!isLoading && !nfts?.length) return <NFTNotFound />;
+  // if (!isLoading && !nfts?.length) return <NFTNotFound />;
 
-  if (isLoading && !nfts.length)
+  const Loading = () => {
+    // if (isLoading && !nfts.length)
     return (
       <Box safeArea w="100%" px={5}>
         <VStack h="100%" space={6}>
-          {[1, 2, 3, 4, 5].map((item) => {
+          {[1, 2, 3, 4, 5].map((item, index) => {
             return (
               <HStack
                 w="100%"
@@ -119,6 +123,7 @@ const OwnNFTs = ({ navigation }) => {
                 }}
                 h={150}
                 p={2}
+                key={index}
               >
                 <Skeleton
                   w="40"
@@ -148,7 +153,7 @@ const OwnNFTs = ({ navigation }) => {
         </VStack>
       </Box>
     );
-
+  };
   // if (error) return <Text>An error occured </Text>;
 
   return (
@@ -158,56 +163,62 @@ const OwnNFTs = ({ navigation }) => {
     >
       <Box safeArea px={6}>
         <VStack h="100%" space={4}>
-          {nfts?.map((nft, index) => {
-            return (
-              <HStack
-                w="100%"
-                maxW="400"
-                space={5}
-                overflow="hidden"
-                rounded="md"
-                h={150}
-                p={2}
-                borderWidth="1"
-                _dark={{
-                  borderColor: "coolGray.500",
-                }}
-                _light={{
-                  borderColor: "coolGray.200",
-                }}
-                key={index}
-              >
-                <Image
-                  source={{
-                    uri: nft.image,
+          {isLoading && !nfts.length ? (
+            <Loading />
+          ) : nfts?.length > 0 ? (
+            nfts?.map((nft, index) => {
+              return (
+                <HStack
+                  w="100%"
+                  maxW="400"
+                  space={5}
+                  overflow="hidden"
+                  rounded="md"
+                  h={150}
+                  p={2}
+                  borderWidth="1"
+                  _dark={{
+                    borderColor: "coolGray.500",
                   }}
-                  width="50%"
-                  height="100%"
-                  alt="Alternate Text"
-                  borderRadius={10}
-                />
-                <VStack space={3} flex="2" py={2}>
-                  <Text fontSize="lg">{nft.name}</Text>
-                  <HStack alignItems="center" ml={-1} mb={2}>
-                    <MaterialCommunityIcons
-                      name="ethereum"
-                      size={24}
-                      color="grey"
-                    />
-                    <Text fontSize="md">{nft.price} ETH</Text>
-                  </HStack>
-                  <Button
-                    borderRadius={50}
-                    onPress={() => {
-                      resellNFT(nft);
+                  _light={{
+                    borderColor: "coolGray.200",
+                  }}
+                  key={index}
+                >
+                  <Image
+                    source={{
+                      uri: nft.image,
                     }}
-                  >
-                    Resell
-                  </Button>
-                </VStack>
-              </HStack>
-            );
-          })}
+                    width="50%"
+                    height="100%"
+                    alt="Alternate Text"
+                    borderRadius={10}
+                  />
+                  <VStack space={3} flex="2" py={2}>
+                    <Text fontSize="lg">{nft.name}</Text>
+                    <HStack alignItems="center" ml={-1} mb={2}>
+                      <MaterialCommunityIcons
+                        name="ethereum"
+                        size={24}
+                        color="grey"
+                      />
+                      <Text fontSize="md">{nft.price} ETH</Text>
+                    </HStack>
+                    <Button
+                      borderRadius={50}
+                      onPress={() => {
+                        resellNFT(nft);
+                      }}
+                    >
+                      Resell
+                    </Button>
+                  </VStack>
+                </HStack>
+              );
+            })
+          ) : (
+            !isLoading && nfts?.length == 0 && <NFTNotFound />
+          )}
         </VStack>
       </Box>
     </ScrollView>

@@ -44,6 +44,7 @@ const Home = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      // setNfts([]);
       loadNFTs();
     }, [])
   );
@@ -77,9 +78,11 @@ const Home = ({ navigation }) => {
   }
 
   const loadNFTs = async () => {
+    setIsLoading(true);
     const provider = ethers.providers.getDefaultProvider(contractNetwork);
     // const provider = new ethers.providers.JsonRpcProvider(
     //   "https://eth-goerli.g.alchemy.com"
+    //   // contractNetwork
     // );
 
     const contract = new ethers.Contract(
@@ -119,7 +122,6 @@ const Home = ({ navigation }) => {
     );
 
     setIsLoading(false);
-    console.log({ items });
     setNfts(items);
     // return items;
   };
@@ -368,6 +370,8 @@ const Home = ({ navigation }) => {
             flex: 1,
             marginVertical: 20,
           }}
+          // showsVerticalScrollIndicator={false}
+          // showsHorizontalScrollIndicator={false}
         />
       </ScrollView>
       <ConnectWalletActionSheet
