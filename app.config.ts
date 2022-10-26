@@ -90,8 +90,8 @@ const withPackageVisibility: ConfigPlugin = (config) => {
 };
 
 const config: ExpoConfig = {
-  name: "nfti",
-  slug: "nfti",
+  name: "nftycart",
+  slug: "nftycart",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -108,10 +108,10 @@ const config: ExpoConfig = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.clxyder.nfti",
+    bundleIdentifier: "com.clxyder.nftycart",
   },
   android: {
-    package: "com.clxyder.nfti",
+    package: "com.clxyder.nftycart",
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
@@ -131,7 +131,7 @@ const config: ExpoConfig = {
   ],
   extra: {
     eas: {
-      projectId: "dbeee433-ba33-4cba-8010-62f157862995",
+      projectId: "d16f39ee-18f0-43a4-8156-19885a8dd457",
     },
   },
 };
