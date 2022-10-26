@@ -7,7 +7,13 @@ interface PropTypes {
   containerStyle?: ViewStyle;
   targetLines?: number;
 }
-const TextLessMoreView = ({ targetLines, text }) => {
+const TextLessMoreView = ({
+  targetLines,
+  text,
+}: {
+  targetLines: number;
+  text: string;
+}) => {
   const [textShown, setTextShown] = useState(false); //To show your remaining Text
   const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
   const [triggerTextLocation, setTriggerTextLocation] = useState({
