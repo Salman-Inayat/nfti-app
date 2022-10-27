@@ -173,11 +173,7 @@ const ViewNFT = ({ route, navigation }: { route: any; navigation: any }) => {
             Buy
           </Button>
         </VStack>
-        <ConnectWalletActionSheet
-          isOpen={isOpen}
-          onOpen={onOpen}
-          onClose={onClose}
-        />
+        <ConnectWalletActionSheet isOpen={isOpen} onClose={onClose} />
       </Box>
       <Loader loading={isProcessing} text="Processing..." />
     </ScrollView>

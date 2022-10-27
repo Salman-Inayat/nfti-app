@@ -19,22 +19,21 @@ import { useStore } from "../../store";
 
 const ConnectWalletActionSheet = ({
   isOpen,
-  onOpen,
+
   onClose,
 }: {
   isOpen: boolean;
-  onOpen: () => void;
   onClose: () => void;
 }) => {
   const connector = useWalletConnect();
   const { setUserWalletConnection } = useStore();
 
   const connectWallet = async () => {
-    await connector.connect();
+    await connector?.connect();
   };
 
   useEffect(() => {
-    if (connector.connected) {
+    if (connector?.connected) {
       const walletProvider = new WalletConnectProvider({
         chainId: 5,
         infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",

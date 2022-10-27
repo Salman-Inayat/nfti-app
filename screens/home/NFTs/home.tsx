@@ -371,11 +371,7 @@ const Home = ({ navigation }: { navigation: any }) => {
           // showsHorizontalScrollIndicator={false}
         />
       </ScrollView>
-      <ConnectWalletActionSheet
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-      />
+      <ConnectWalletActionSheet isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

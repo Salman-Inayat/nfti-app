@@ -2,7 +2,6 @@ import create from "zustand";
 
 interface Store {
   isLoggedIn: boolean;
-  walletData: any;
   connector: any;
   provider: any;
   signer: any;
@@ -16,7 +15,6 @@ export const useStore = create<Store>((set) => ({
   // signUpError: null,
   // userId: null,
   // hasWalletConnected: false,
-  walletData: null,
   connector: null,
   provider: null,
   signer: null,
@@ -82,8 +80,6 @@ export const useStore = create<Store>((set) => ({
       isLoggedIn: false,
       provider: null,
       signer: null,
-
-      walletData: null,
     });
   },
   // attachWallet: async (data: any, navigation) => {
