@@ -34,13 +34,23 @@ import ConnectWalletActionSheet from "../../../components/ActionSheet";
 import BalanceContainer from "../../../components/BalanceContainer";
 import { useFocusEffect } from "@react-navigation/native";
 
-const Home = ({ navigation }) => {
+interface NFTsProps {
+  price: string;
+  tokenId: number;
+  seller: string;
+  owner: string;
+  image: string;
+  name: string;
+  description: string;
+}
+
+const Home = ({ navigation }: { navigation: any }) => {
   const { connector, provider } = useStore();
   const [walletBalance, setWalletBalance] = useState("");
   const { isOpen, onOpen, onClose } = useDisclose();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [nfts, setNfts] = useState([]);
+  const [nfts, setNfts] = useState<NFTsProps[]>([]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -81,8 +91,8 @@ const Home = ({ navigation }) => {
     setIsLoading(true);
     const provider = ethers.providers.getDefaultProvider(contractNetwork);
     // const provider = new ethers.providers.JsonRpcProvider(
-    //   "https://eth-goerli.g.alchemy.com/v2/FZeWMKll5lWJmnCIR2htG8XVPDFo1iv2"
-    //   // contractNetwork
+    //   "https://eth-goerli.g.alchemy.com/v2/FZeWMKll5lWJmnCIR2htG8XVPDFo1iv2",
+    //   contractNetwork
     // );
 
     const contract = new ethers.Contract(
@@ -123,13 +133,7 @@ const Home = ({ navigation }) => {
 
     setIsLoading(false);
     setNfts(items);
-    // return items;
   };
-
-  // const { isLoading, error, data } = useQuery(["marketplace-nfts"], loadNFTs);
-
-  // if (!isLoading && nfts?.length == 0)
-  //   return <Text>No items in marketplace</Text>;
 
   if (isLoading && !nfts?.length)
     return (
@@ -146,7 +150,6 @@ const Home = ({ navigation }) => {
                   borderWidth="1"
                   space={1}
                   overflow="hidden"
-                  // rounded="xl"
                   borderRadius={10}
                   _dark={{
                     borderColor: "coolGray.700",
@@ -177,8 +180,6 @@ const Home = ({ navigation }) => {
         </VStack>
       </VStack>
     );
-
-  // if (error) return <Text>An error occured </Text>;
 
   const viewSingleNFT = (nft: any) => {
     navigation.navigate("Dashboard", {
@@ -284,10 +285,6 @@ const Home = ({ navigation }) => {
   //   return isPresent;
   // };
 
-  // const emptyStorage = async () => {
-  //   await AsyncStorage.removeItem("favoriteNFTs");
-  // };
-
   const renderItem = (nft: { item: any }) => {
     const { item } = nft;
     return (
@@ -365,7 +362,7 @@ const Home = ({ navigation }) => {
           data={nfts}
           renderItem={renderItem}
           numColumns={2}
-          keyExtractor={(item) => item.tokenId}
+          // keyExtractor={(item) => item.tokenId}
           style={{
             flex: 1,
             marginVertical: 20,

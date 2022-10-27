@@ -22,7 +22,7 @@ const BalanceBox = ({ walletBalance }: { walletBalance: string }) => {
   );
 };
 
-const WalletNotConnected = ({ onOpen }) => {
+const WalletNotConnected = ({ onOpen }: { onOpen: () => void }) => {
   return (
     <Box>
       <Button onPress={onOpen} rounded="md">
@@ -32,7 +32,7 @@ const WalletNotConnected = ({ onOpen }) => {
   );
 };
 
-const BalanceContainer = ({ onOpen }) => {
+const BalanceContainer = ({ onOpen }: { onOpen: () => void }) => {
   const { connector, provider, signer } = useStore();
 
   const [walletBalance, setWalletBalance] = useState("");

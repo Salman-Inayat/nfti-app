@@ -15,7 +15,7 @@ import LogoutActionSheet from "../../components/LogoutActionSheet";
 import { Alert } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation }: { navigation: any }) => {
   const { logout, connector } = useStore();
   const { isOpen, onOpen, onClose } = useDisclose();
 
@@ -26,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
     logout();
   };
 
-  const headerOptions = {
+  const headerOptions: any = {
     // headerTintColor: primaryColor,
     headerStyle: { backgroundColor: "transparent" },
     headerTitleAlign: "center",
@@ -63,9 +63,9 @@ const HomeScreen = ({ navigation }) => {
     },
   };
 
-  const screenOptions = ({ route }) => ({
+  const screenOptions = ({ route }: { route: any }) => ({
     tabBarStyle: { height: 60 },
-    tabBarIcon: ({ color, size, focused }) => {
+    tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => {
       switch (route.name) {
         case "NFTs":
           return (

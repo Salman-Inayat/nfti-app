@@ -8,12 +8,10 @@ import ViewNFT from "./viewNFT";
 import ResellNFT from "./resellNFT";
 import { primaryColor } from "../../../theme/colors";
 
-const NFTs = ({ navigation }) => {
-  const { logout } = useStore();
-
+const NFTs = ({ navigation }: { navigation: any }) => {
   const Tab = createNativeStackNavigator();
 
-  const headerOptions = {
+  const headerOptions: any = {
     headerTitleAlign: "center",
   };
 

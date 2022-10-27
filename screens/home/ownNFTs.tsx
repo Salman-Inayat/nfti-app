@@ -11,7 +11,6 @@ import {
 } from "native-base";
 import { View, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../../utils/axiosInstance";
 import { useStore } from "../../store";
 import { ethers } from "ethers";
 import { useQuery } from "@tanstack/react-query";
@@ -23,16 +22,20 @@ import NFTNotFound from "../../components/NotFound";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
-const OwnNFTs = ({ navigation }) => {
-  const { connector, provider, signer } = useStore();
-  const [isLoading, setIsLoading] = useState(true);
-  const [nfts, setNfts] = useState([]);
+interface NFTsProps {
+  price: string;
+  tokenId: number;
+  seller: string;
+  owner: string;
+  image: string;
+  name: string;
+  description: string;
+}
 
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   setIsLoading(true);
-  //   setNfts([]);
-  // }, []);
+const OwnNFTs = ({ navigation }: { navigation: any }) => {
+  const { connector, provider } = useStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [nfts, setNfts] = useState<NFTsProps[]>([]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,43 +44,49 @@ const OwnNFTs = ({ navigation }) => {
   );
 
   const loadNFTs = async () => {
-    // setIsLoading(true);
     const contract = new ethers.Contract(
       marketplaceAddress,
       marketplaceJSON.abi,
-      signer
+      provider
     );
 
     const data = await contract.fetchMyNFTs();
 
-    /*
-    Map over items returned from smart contract and format them
-    as well as fetch their metadata
-   */
     const items = await Promise.all(
-      data.map(async (item) => {
-        const tokenUri = await contract.tokenURI(item.tokenId);
-        const meta = await axios.get(tokenUri);
-        const price = ethers.utils.formatUnits(item.price.toString(), "ether");
-        let itemToReturn = {
-          price,
-          tokenId: item.tokenId.toNumber(),
-          seller: item.seller,
-          owner: item.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          tokenUri,
-        };
-        return itemToReturn;
-      })
+      data.map(
+        async (item: {
+          tokenId: { toNumber: () => any };
+          price: { toString: () => ethers.BigNumberish };
+          seller: any;
+          owner: any;
+        }) => {
+          const tokenUri = await contract.tokenURI(item.tokenId);
+          const meta = await axios.get(tokenUri);
+          const price = ethers.utils.formatUnits(
+            item.price.toString(),
+            "ether"
+          );
+          let itemToReturn = {
+            price,
+            tokenId: item.tokenId.toNumber(),
+            seller: item.seller,
+            owner: item.owner,
+            image: meta.data.image,
+            name: meta.data.name,
+            tokenUri,
+          };
+          return itemToReturn;
+        }
+      )
     );
 
+    console.log({ items });
     setNfts(items);
     setIsLoading(false);
     // return items;
   };
 
-  const resellNFT = (nft) => {
+  const resellNFT = (nft: NFTsProps) => {
     navigation.navigate("Dashboard", {
       screen: "NFTs",
       params: {

@@ -9,7 +9,6 @@ export default function useConnectWallet() {
   const { setUserWalletConnection } = useStore();
 
   const connectWallet = async () => {
-    console.log("wallet is connected inside walletConnect()");
     await connector?.connect();
   };
 

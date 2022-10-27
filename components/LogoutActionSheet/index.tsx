@@ -3,7 +3,13 @@ import { Actionsheet, Icon, Box, Text, Center } from "native-base";
 import { Path } from "react-native-svg";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 
-function LogoutActionSheet({ isOpen, onOpen, onClose }) {
+function LogoutActionSheet({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
       <Actionsheet.Content>

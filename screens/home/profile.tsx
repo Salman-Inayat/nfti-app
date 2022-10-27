@@ -28,14 +28,40 @@ import { marketplaceAddress } from "../../config";
 import moment from "moment";
 import * as WebBrowser from "expo-web-browser";
 
-const Profile = ({ navigation }) => {
+export interface Transaction {
+  asset: null;
+  blockNum: string;
+  category: string;
+  erc1155Metadata: null;
+  erc721TokenId: string;
+  from: string;
+  hash: string;
+  metadata: Metadata;
+  rawContract: RawContract;
+  to: string;
+  tokenId: string;
+  uniqueId: string;
+  value: null;
+}
+
+export interface Metadata {
+  blockTimestamp: Date;
+}
+
+export interface RawContract {
+  address: string;
+  decimal: null;
+  value: null;
+}
+
+const Profile = () => {
   const { connector, provider, signer } = useStore();
 
   const toast = useToast();
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [walletBalance, setWalletBalance] = useState({
-    inETH: null,
-    inUSD: null,
+    inETH: "",
+    inUSD: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,8 +69,8 @@ const Profile = ({ navigation }) => {
     React.useCallback(() => {
       setTransactions([]);
       setWalletBalance({
-        inETH: null,
-        inUSD: null,
+        inETH: "",
+        inUSD: "",
       });
       if (connector?.connected) {
         getTransactions();
@@ -98,7 +124,6 @@ const Profile = ({ navigation }) => {
 
     const response = await axios(axiosURL, requestOptions);
     const { result } = response.data;
-    console.log("Result: ", result);
     setIsLoading(false);
     setTransactions(result.transfers);
   };
@@ -107,8 +132,8 @@ const Profile = ({ navigation }) => {
     return <ProfileWalletNotConnected />;
   }
 
-  const checkTransactionType = (transaction) => {
-    if (transaction.from === connector?.accounts[0].toLowerCase()) {
+  const checkTransactionType = (transaction: any) => {
+    if (transaction?.from === connector?.accounts[0].toLowerCase()) {
       return "Sender";
     }
     return "Receiver";
@@ -124,7 +149,7 @@ const Profile = ({ navigation }) => {
     });
   };
 
-  const viewOnEtherscan = async (txHash) => {
+  const viewOnEtherscan = async (txHash: string) => {
     await WebBrowser.openBrowserAsync(
       `https://goerli.etherscan.io/tx/${txHash}`
     );
@@ -165,13 +190,13 @@ const Profile = ({ navigation }) => {
                 px={2}
                 py={1}
               >
-                <Text>{shortenAddress(connector.accounts[0])}</Text>
+                <Text>{shortenAddress(connector?.accounts[0])}</Text>
                 <MaterialIcons
                   name="content-copy"
                   size={18}
                   color={primaryColor}
                   onPress={() => {
-                    copyToClipboard(connector.accounts[0]);
+                    copyToClipboard(connector?.accounts[0]);
                   }}
                 />
               </HStack>
@@ -188,7 +213,7 @@ const Profile = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
           >
-            {transactions.length > 0
+            {transactions?.length > 0
               ? transactions?.map((transaction, index) => {
                   return (
                     <HStack
@@ -215,12 +240,6 @@ const Profile = ({ navigation }) => {
                             color={primaryColor}
                           />
                         )}
-
-                        {/* <MaterialCommunityIcons
-                          name="call-received"
-                          size={24}
-                          color={primaryColor}
-                        /> */}
                       </Box>
 
                       <HStack space={2} justifyContent="space-between" w="90%">
@@ -232,18 +251,13 @@ const Profile = ({ navigation }) => {
                           </Text>
                           <Text fontSize="xs">
                             {checkTransactionType(transaction) === "Sender"
-                              ? "To: " + shortenAddress(transaction.to)
-                              : "From: " + shortenAddress(transaction.from)}
-                            {/* {shortenAddress(
-                          checkTransactionType(transaction) === "Sender"
-                            ? transaction.to
-                            : transaction.from
-                        )} */}
+                              ? "To: " + shortenAddress(transaction!.to)
+                              : "From: " + shortenAddress(transaction!.from!)}
                           </Text>
                         </VStack>
                         <VStack>
                           <Button
-                            onPress={() => viewOnEtherscan(transaction.hash)}
+                            onPress={() => viewOnEtherscan(transaction?.hash)}
                             bg="transparent"
                             _text={{ color: primaryColor }}
                             _pressed={{

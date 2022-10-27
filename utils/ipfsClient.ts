@@ -1,6 +1,14 @@
 import axios from "axios";
 
-export const uploadToIPFS = async (content) => {
+export const uploadToIPFS = async (
+  content:
+    | string
+    | {
+        name: string;
+        description: string;
+        image: string;
+      }
+) => {
   const options = {
     method: "POST",
     url: "https://deep-index.moralis.io/api/v2/ipfs/uploadFolder",

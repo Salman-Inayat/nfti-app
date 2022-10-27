@@ -21,13 +21,13 @@ import { marketplaceAddress, marketplaceJSON } from "../../../config";
 import { useStore } from "../../../store";
 import Loader from "../../../components/Loader";
 
-const ResellNFT = ({ route, navigation }) => {
+const ResellNFT = ({ route, navigation }: { route: any; navigation: any }) => {
   const { nft } = route.params;
   const [price, setPrice] = useState("");
-  const { connector, privider, signer } = useStore();
+  const { connector, signer } = useStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePriceChange = (text) => {
+  const handlePriceChange = (text: string) => {
     setPrice(text);
   };
 

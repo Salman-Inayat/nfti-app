@@ -27,7 +27,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { primaryColor } from "../../theme/colors";
 import Loader from "../../components/Loader";
 
-const CreateNFT = ({ navigation }) => {
+const CreateNFT = ({ navigation }: { navigation: any }) => {
   const [imageURL, setImageURL] = useState("");
   const { connector, provider, signer } = useStore();
   const [isCreating, setIsCreating] = useState(false);
@@ -72,13 +72,13 @@ const CreateNFT = ({ navigation }) => {
 
     const base64 = result.base64;
     setIsImageUploading(true);
-    const imageURL = await uploadToIPFS(base64);
+    const imageURL = await uploadToIPFS(base64!);
     console.log(imageURL);
     setImageURL(imageURL);
     setIsImageUploading(false);
   };
 
-  async function listNFTForSale(formData) {
+  async function listNFTForSale(formData: any) {
     // setIsCreating(true)
     const { name, description, price } = formData;
 

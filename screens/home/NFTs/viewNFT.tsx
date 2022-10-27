@@ -21,9 +21,18 @@ import { useState, useEffect } from "react";
 import TextLessMoreView from "../../../components/TextMoreOrLess";
 import Loader from "../../../components/Loader";
 
-const ViewNFT = ({ route, navigation }) => {
+interface NFTsProps {
+  price: string;
+  tokenId: number;
+  seller: string;
+  owner: string;
+  image: string;
+  name: string;
+  description: string;
+}
+
+const ViewNFT = ({ route, navigation }: { route: any; navigation: any }) => {
   const { nft } = route.params;
-  console.log({ nft });
 
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
@@ -41,7 +50,7 @@ const ViewNFT = ({ route, navigation }) => {
 
   const { isOpen, onOpen, onClose } = useDisclose();
 
-  const buyNFT = async (nft) => {
+  const buyNFT = async (nft: NFTsProps) => {
     if (connector?.connected) {
       console.log(connector?.accounts[0]);
       console.log(nft.seller);

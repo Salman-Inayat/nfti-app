@@ -17,7 +17,15 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers } from "ethers";
 import { useStore } from "../../store";
 
-const ConnectWalletActionSheet = ({ isOpen, onOpen, onClose }) => {
+const ConnectWalletActionSheet = ({
+  isOpen,
+  onOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}) => {
   const connector = useWalletConnect();
   const { setUserWalletConnection } = useStore();
 
