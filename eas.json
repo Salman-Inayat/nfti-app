@@ -16,7 +16,12 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease",
+        "image": "latest"
+      }
+    }
   },
   "submit": {
     "production": {}

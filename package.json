@@ -8,7 +8,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "postinstall": "npx jetify"
   },
   "jest": {
     "preset": "jest-expo"
@@ -59,7 +60,6 @@
     "react-hook-form": "^7.36.1",
     "react-native": "0.64.3",
     "react-native-dotenv": "^3.3.1",
-    "react-native-gesture-handler": "~2.1.0",
     "react-native-get-random-values": "~1.7.0",
     "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-level-fs": "^3.0.1",
@@ -95,6 +95,7 @@
     "ethers": "^5.7.1",
     "jest": "^26.6.3",
     "jest-expo": "~44.0.1",
+    "jetifier": "^2.0.0",
     "react-test-renderer": "17.0.1",
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
