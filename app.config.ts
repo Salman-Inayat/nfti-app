@@ -94,12 +94,12 @@ const config: ExpoConfig = {
   slug: "nftycart",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./assets/images/NFT-logo.png",
   scheme: "myapp",
   userInterfaceStyle: "automatic",
   splash: {
-    image: "./assets/images/splash.png",
-    resizeMode: "contain",
+    image: "./assets/images/splash-screen.png",
+    resizeMode: "cover",
     backgroundColor: "#ffffff",
   },
   updates: {
