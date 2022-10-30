@@ -19,7 +19,7 @@ const AppScreen = () => {
         }}
       >
         <Stack.Screen name="Dashboard" component={HomeScreen} />
-        <Stack.Screen name="Auth" component={AuthScreen} />
+        {/* <Stack.Screen name="Auth" component={AuthScreen} /> */}
         <Stack.Screen name="ConnectWallet" component={ConnectWalletScreen} />
       </Stack.Navigator>
     </NavigationContainer>

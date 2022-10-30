@@ -32,15 +32,17 @@ import {
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import ConnectWalletActionSheet from "../../../components/ActionSheet";
 import BalanceContainer from "../../../components/BalanceContainer";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const Home = ({ navigation }) => {
-  const { connector, provider } = useStore();
+  const { connector, provider, setUserWalletConnection } = useStore();
   const [walletBalance, setWalletBalance] = useState("");
   const { isOpen, onOpen, onClose } = useDisclose();
 
   const [isLoading, setIsLoading] = useState(false);
   const [nfts, setNfts] = useState([]);
+  const isFocused = useIsFocused();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -48,6 +50,14 @@ const Home = ({ navigation }) => {
       loadNFTs();
     }, [])
   );
+
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   setNfts([]);
+  //   if (isFocused) {
+  //     loadNFTs();
+  //   }
+  // }, [isFocused]);
 
   // const [favoriteNFTs, setFavoriteNFTs] = useState([]);
 
@@ -66,6 +76,35 @@ const Home = ({ navigation }) => {
   //     setFavoriteNFTs(favoriteNFTs);
   //   }
   // };
+
+  useEffect(() => {
+    if (connector?.connected) {
+      const walletProvider = new WalletConnectProvider({
+        chainId: 5,
+        infuraId: "f62aa0828a7f4e1bbee0fb73cad0388d",
+        connector: connector,
+        qrcode: false,
+      });
+
+      let wp = (async () => {
+        return await walletProvider.enable();
+      })();
+
+      wp.then((res) => {
+        const provider = new ethers.providers.Web3Provider(walletProvider);
+
+        const signer = provider.getSigner();
+
+        const data = {
+          connector,
+          provider,
+          signer,
+        };
+
+        setUserWalletConnection(data);
+      }).catch((err) => console.log(err));
+    }
+  }, []);
 
   const getWalletBalance = async (address: any) => {
     const balance = await provider.getBalance(address).then();
@@ -187,6 +226,7 @@ const Home = ({ navigation }) => {
         screen: "ViewNFT",
         params: {
           nft: nft,
+          name: nft.name,
         },
       },
     });

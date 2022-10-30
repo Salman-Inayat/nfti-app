@@ -20,15 +20,22 @@ import { getETHPriceInUSD, shortenAddress } from "../../../utils/walletUtils";
 import { useState, useEffect } from "react";
 import TextLessMoreView from "../../../components/TextMoreOrLess";
 import Loader from "../../../components/Loader";
+import { useIsFocused } from "@react-navigation/native";
 
 const ViewNFT = ({ route, navigation }) => {
   const { nft } = route.params;
-  console.log({ nft });
 
   const { connector, signer } = useStore();
   const [priceInUSD, setPriceInUSD] = useState<Number>();
   const [isProcessing, setIsProcessing] = useState(false);
   const toast = useToast();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      setIsProcessing(false);
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -43,8 +50,6 @@ const ViewNFT = ({ route, navigation }) => {
 
   const buyNFT = async (nft) => {
     if (connector?.connected) {
-      console.log(connector?.accounts[0]);
-      console.log(nft.seller);
       if (connector?.accounts[0] === nft.seller) {
         toast.show({
           id: "own-nft-error",
@@ -79,18 +84,36 @@ const ViewNFT = ({ route, navigation }) => {
           screen: "Own",
         });
       } catch (err) {
+        console.log(err);
+        console.log(typeof err);
         setIsProcessing(false);
-        toast.show({
-          id: "funds-error",
-          duration: 1500,
-          render: () => {
-            return (
-              <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
-                <Text color="white">Insufficent funds in wallet</Text>
-              </Box>
-            );
-          },
-        });
+        if (Object.values(err).includes("insufficient funds")) {
+          toast.show({
+            id: "insufficient-funds",
+            duration: 1000,
+            render: () => {
+              return (
+                <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+                  <Text color="white">Insufficient funds</Text>
+                </Box>
+              );
+            },
+          });
+        } else if (
+          Object.values(err).includes("User rejected the transaction")
+        ) {
+          toast.show({
+            id: "rejected-transaction",
+            duration: 1500,
+            render: () => {
+              return (
+                <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+                  <Text color="white">User rejected the transaction</Text>
+                </Box>
+              );
+            },
+          });
+        }
       }
     } else {
       onOpen();

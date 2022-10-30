@@ -7,7 +7,6 @@ import {
   HStack,
   Button,
   useToast,
-  ScrollView,
   Heading,
 } from "native-base";
 import React, { useState } from "react";
@@ -23,7 +22,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { primaryColor } from "../../theme/colors";
 import { ethers } from "ethers";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, ScrollView } from "react-native";
 import { marketplaceAddress } from "../../config";
 import moment from "moment";
 import * as WebBrowser from "expo-web-browser";
@@ -98,7 +97,6 @@ const Profile = ({ navigation }) => {
 
     const response = await axios(axiosURL, requestOptions);
     const { result } = response.data;
-    console.log("Result: ", result);
     setIsLoading(false);
     setTransactions(result.transfers);
   };
@@ -182,11 +180,12 @@ const Profile = ({ navigation }) => {
             </VStack>
           </HStack>
         </Box>
-        <VStack space={4} py={4} px={6}>
+        <VStack space={4} py={4} px={6} h="80%">
           <Heading size="md">Transactions</Heading>
           <ScrollView
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1 }}
           >
             {transactions.length > 0
               ? transactions?.map((transaction, index) => {

@@ -15,9 +15,8 @@ import LogoutActionSheet from "../../components/LogoutActionSheet";
 import { Alert } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   const { logout, connector } = useStore();
-  const { isOpen, onOpen, onClose } = useDisclose();
 
   const Tab = createBottomTabNavigator();
 
@@ -126,7 +125,6 @@ const HomeScreen = ({ navigation }) => {
       <Tab.Screen name="Create" component={CreateNFT} options={headerOptions} />
       <Tab.Screen name="Profile" component={Profile} options={headerOptions} />
       <Tab.Screen name="About" component={About} options={headerOptions} />
-      {/* <LogoutActionSheet onClose={onClose} isOpen={isOpen} onOpen={onOpen} /> */}
     </Tab.Navigator>
   );
 };

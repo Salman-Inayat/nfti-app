@@ -17,10 +17,15 @@ const NFTs = ({ navigation }) => {
     headerTitleAlign: "center",
   };
 
+  const viewNFTOptions = ({ route }) => ({
+    title: route.params.name,
+    headerTitleAlign: "center",
+  });
+
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={Home} options={headerOptions} />
-      <Tab.Screen name="ViewNFT" component={ViewNFT} options={headerOptions} />
+      <Tab.Screen name="ViewNFT" component={ViewNFT} options={viewNFTOptions} />
       <Tab.Screen
         name="ResellNFT"
         component={ResellNFT}

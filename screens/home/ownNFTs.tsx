@@ -17,64 +17,86 @@ import { ethers } from "ethers";
 import { useQuery } from "@tanstack/react-query";
 
 import axios from "axios";
-import { marketplaceAddress, marketplaceJSON } from "../../config";
+import {
+  contractNetwork,
+  marketplaceAddress,
+  marketplaceJSON,
+} from "../../config";
 import ConnectWalletAlert from "../../components/ConnectWalletAlert";
 import NFTNotFound from "../../components/NotFound";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const OwnNFTs = ({ navigation }) => {
   const { connector, provider, signer } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const [nfts, setNfts] = useState([]);
+  const [walletHasBalance, setWalletHasBalance] = useState(false);
 
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   setIsLoading(true);
-  //   setNfts([]);
-  // }, []);
+  const isFocused = useIsFocused();
 
-  useFocusEffect(
-    React.useCallback(() => {
+  useEffect(() => {
+    setIsLoading(true);
+    setNfts([]);
+    if (isFocused) {
       loadNFTs();
-    }, [])
-  );
+    }
+  }, [isFocused, connector]);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     loadNFTs();
+  //   }, [])
+  // );
+
+  const getWalletBalance = async (address: any) => {
+    const balance = await provider.getBalance(address).then();
+    const balanceInEth = ethers.utils.formatEther(balance);
+    return balanceInEth === "0.0" ? false : true;
+  };
 
   const loadNFTs = async () => {
-    // setIsLoading(true);
-    const contract = new ethers.Contract(
-      marketplaceAddress,
-      marketplaceJSON.abi,
-      signer
-    );
+    setWalletHasBalance(false);
 
-    const data = await contract.fetchMyNFTs();
+    const hasBalance = await getWalletBalance(connector?.accounts[0]);
+    if (hasBalance) {
+      const contract = new ethers.Contract(
+        marketplaceAddress,
+        marketplaceJSON.abi,
+        signer
+      );
 
-    /*
-    Map over items returned from smart contract and format them
-    as well as fetch their metadata
-   */
-    const items = await Promise.all(
-      data.map(async (item) => {
-        const tokenUri = await contract.tokenURI(item.tokenId);
-        const meta = await axios.get(tokenUri);
-        const price = ethers.utils.formatUnits(item.price.toString(), "ether");
-        let itemToReturn = {
-          price,
-          tokenId: item.tokenId.toNumber(),
-          seller: item.seller,
-          owner: item.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          tokenUri,
-        };
-        return itemToReturn;
-      })
-    );
+      const data = await contract.fetchMyNFTs();
 
-    setNfts(items);
-    setIsLoading(false);
-    // return items;
+      const items = await Promise.all(
+        data.map(async (item) => {
+          const tokenUri = await contract.tokenURI(item.tokenId);
+          const meta = await axios.get(tokenUri);
+          const price = ethers.utils.formatUnits(
+            item.price.toString(),
+            "ether"
+          );
+          let itemToReturn = {
+            price,
+            tokenId: item.tokenId.toNumber(),
+            seller: item.seller,
+            owner: item.owner,
+            image: meta.data.image,
+            name: meta.data.name,
+            tokenUri,
+          };
+          return itemToReturn;
+        })
+      );
+
+      setNfts(items);
+      setIsLoading(false);
+      setWalletHasBalance(true);
+    } else {
+      setNfts([]);
+      setIsLoading(false);
+      setWalletHasBalance(false);
+    }
   };
 
   const resellNFT = (nft) => {
@@ -104,7 +126,7 @@ const OwnNFTs = ({ navigation }) => {
   const Loading = () => {
     // if (isLoading && !nfts.length)
     return (
-      <Box safeArea w="100%" px={5}>
+      <Box w="100%">
         <VStack h="100%" space={6}>
           {[1, 2, 3, 4, 5].map((item, index) => {
             return (
@@ -156,12 +178,28 @@ const OwnNFTs = ({ navigation }) => {
   };
   // if (error) return <Text>An error occured </Text>;
 
+  if (!isLoading && !walletHasBalance) {
+    return (
+      <Box safeArea px={6}>
+        <Text fontSize="lg">
+          Please topup your wallet to view NFTs you own.
+        </Text>
+      </Box>
+    );
+  }
+
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
     >
       <Box safeArea px={6}>
+        {/* {!walletHasBalance &&  ? (
+          <Text>
+            You don't have balance in your wallet. Please add some funds to your
+            wallet to view own NFTs
+          </Text>
+        ) : ( */}
         <VStack h="100%" space={4}>
           {isLoading && !nfts.length ? (
             <Loading />
@@ -220,6 +258,7 @@ const OwnNFTs = ({ navigation }) => {
             !isLoading && nfts?.length == 0 && <NFTNotFound />
           )}
         </VStack>
+        {/* )} */}
       </Box>
     </ScrollView>
   );
