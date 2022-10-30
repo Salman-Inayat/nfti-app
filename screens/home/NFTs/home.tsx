@@ -120,8 +120,8 @@ const Home = ({ navigation }) => {
     setIsLoading(true);
     const provider = ethers.providers.getDefaultProvider(contractNetwork);
     // const provider = new ethers.providers.JsonRpcProvider(
-    //   "https://eth-goerli.g.alchemy.com/v2/FZeWMKll5lWJmnCIR2htG8XVPDFo1iv2"
-    //   // contractNetwork
+    //   "https://rpc-mumbai.maticvigil.com",
+    //   contractNetwork
     // );
 
     const contract = new ethers.Contract(

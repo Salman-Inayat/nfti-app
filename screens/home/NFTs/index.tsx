@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Icon, Button } from "native-base";
+import { IconButton, Icon, Button, Image, HStack, Text } from "native-base";
 import { useStore } from "../../../store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -17,6 +17,23 @@ const NFTs = ({ navigation }) => {
     headerTitleAlign: "center",
   };
 
+  const homeHeaderOptions = {
+    // remove default header name
+    headerTitle: "",
+    headerLeft: () => (
+      <HStack space={2} alignItems="center" ml={2}>
+        <Image
+          source={require("../../../assets/images/NFT-logo.png")}
+          alt="logo"
+          size="xs"
+        />
+        <Text fontSize="lg" fontWeight="bold">
+          NftyCart
+        </Text>
+      </HStack>
+    ),
+  };
+
   const viewNFTOptions = ({ route }) => ({
     title: route.params.name,
     headerTitleAlign: "center",
@@ -24,7 +41,7 @@ const NFTs = ({ navigation }) => {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={Home} options={headerOptions} />
+      <Tab.Screen name="Home" component={Home} options={homeHeaderOptions} />
       <Tab.Screen name="ViewNFT" component={ViewNFT} options={viewNFTOptions} />
       <Tab.Screen
         name="ResellNFT"
