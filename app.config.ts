@@ -112,8 +112,14 @@ const config: ExpoConfig = {
   },
   android: {
     package: "com.clxyder.nftycart",
+    icon: "./assets/images/NFT-logo.png",
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-icon.png",
+      backgroundColor: "#ffffff",
+    },
+    splash: {
+      image: "./assets/images/splash-screen.png",
+      resizeMode: "cover",
       backgroundColor: "#ffffff",
     },
   },
