@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.clxyder.testdapp'
+        applicationId 'com.clxyder.nftycart'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

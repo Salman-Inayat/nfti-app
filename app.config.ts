@@ -90,7 +90,7 @@ const withPackageVisibility: ConfigPlugin = (config) => {
 };
 
 const config: ExpoConfig = {
-  name: "nftycart",
+  name: "NftyCart",
   slug: "nftycart",
   version: "1.0.0",
   orientation: "portrait",
@@ -114,8 +114,8 @@ const config: ExpoConfig = {
     package: "com.clxyder.nftycart",
     icon: "./assets/images/NFT-logo.png",
     adaptiveIcon: {
-      foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff",
+      foregroundImage: "./assets/images/NFT-logo.png",
+      backgroundColor: "#FFFFFF",
     },
     splash: {
       image: "./assets/images/splash-screen.png",
