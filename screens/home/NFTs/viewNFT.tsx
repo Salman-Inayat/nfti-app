@@ -84,36 +84,34 @@ const ViewNFT = ({ route, navigation }) => {
           screen: "Own",
         });
       } catch (err) {
-        console.log(err);
-        console.log(typeof err);
         setIsProcessing(false);
-        if (Object.values(err).includes("insufficient funds")) {
-          toast.show({
-            id: "insufficient-funds",
-            duration: 1000,
-            render: () => {
-              return (
-                <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
-                  <Text color="white">Insufficient funds</Text>
-                </Box>
-              );
-            },
-          });
-        } else if (
-          Object.values(err).includes("User rejected the transaction")
-        ) {
-          toast.show({
-            id: "rejected-transaction",
-            duration: 1500,
-            render: () => {
-              return (
-                <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
-                  <Text color="white">User rejected the transaction</Text>
-                </Box>
-              );
-            },
-          });
-        }
+        // if (Object.values(err).includes("insufficient funds")) {
+        toast.show({
+          id: "insufficient-funds",
+          duration: 1000,
+          render: () => {
+            return (
+              <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+                <Text color="white">Insufficient funds</Text>
+              </Box>
+            );
+          },
+        });
+        // } else if (
+        //   Object.values(err).includes("User rejected the transaction")
+        // ) {
+        //   toast.show({
+        //     id: "rejected-transaction",
+        //     duration: 1500,
+        //     render: () => {
+        //       return (
+        //         <Box bg="primary.600" px="2" py="2" rounded="md" mb={5}>
+        //           <Text color="white">User rejected the transaction</Text>
+        //         </Box>
+        //       );
+        //     },
+        //   });
+        // }
       }
     } else {
       onOpen();
